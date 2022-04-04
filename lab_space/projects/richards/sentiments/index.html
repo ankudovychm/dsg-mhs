@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="eng">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="../../../styles/main-dark.css"></link>
+        <link rel="stylesheet" href="../../../styles/d3-dark.css"></link>
+
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        
+        <style></style>  
+    </head>
+
+    <body>
+        <header id="menu">
+            <script src="../../../styles/menu.js"></script>
+        </header>
+        <div class="main-body">
+            <div class="container">
+                <h1 class="title">Sentiment Analysis</h1>
+
+                <h2 class="svgTitle">Sentiments in Richards's Letter</h2>
+                <div class="row justify-content-center">
+                    <label for="start">Earliest Date:</label>
+                    <input type="date" id="start">
+
+                    <label for="end">Latest Date:</label>
+                    <input type="date" id="end">
+                    
+                    <div class="lollipop-chart"></div>
+                    <script src="/projects/richards/sentiments/sentiments.js"></script>
+
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+</html>
