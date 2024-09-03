@@ -155,10 +155,10 @@ d3.json('data/JQA_coRef-network.json').then(data => {
         let nodes = dataset.nodes.map(d => Object.create(d));
         let links = dataset.links.map(d => Object.create(d));
 
-        // links = links.filter(function (d) { return d.weight >= 0.5 });
-        // nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
-        // nodes = nodes.filter(function (d) {return d.degree >= 20});
-        // links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
+        links = links.filter(function (d) { return d.weight >= 0.5 });
+        nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
+        nodes = nodes.filter(function (d) {return d.degree >= 20});
+        links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
 
         // Draw links.
         link = d3.select('.links')
@@ -246,13 +246,16 @@ d3.json('data/JQA_coRef-network.json').then(data => {
             ['Community', formatNumbers(d.modularity, 2)],
             ['Betweenness', formatNumbers(d.betweenness, 3)],
             ['Eigenvector', formatNumbers(d.eigenvector, 3)],
+            ['filt', formatNumbers(d.filt, 3)],
+
+
         ];
 
         tooltip
             .transition(duration)
                 .attr('pointer-events', 'none')
                 .style('opacity', 0.97)
-                .style("left", (pos.x) + "px")
+                .style("right", (pos.x) + "px")
                 .style("top", (pos.y) + "px");
             
         toolHeader
@@ -271,9 +274,10 @@ d3.json('data/JQA_coRef-network.json').then(data => {
 
     node.on('mousemove', function(event) {
         tooltip
-            .style("left", (pos.x) + "px")
-            .style("top", (pos.y) + "px")
-    })
+        .style("left", (event.pageX + 10) + "px")  // Position tooltip 10px right of the cursor
+        .style("top", (event.pageY + 10) + "px")  // Position tooltip 10px below the cursor
+    
+        })
 
     node.on('mouseout', function () {
         tooltip.transition(duration).style('opacity', 0);
@@ -287,3 +291,5 @@ d3.json('data/JQA_coRef-network.json').then(data => {
     })
 
 });
+
+
