@@ -1,39 +1,87 @@
 // Utilities.
 function formatNumbers(d) {
+    /*
+    Function that rounds number to 2 significant digits, with no grouping for thousnads. 
+
+    Inputs: 
+        d: number to be rounded
+    */
     return d3.format('.2r')(d);
 }
 
 let adjlist = [] // Adjacency list for highlighting connected nodes.
 
 function neigh(a, b) {
+    /* 
+    Function that checks if two nodes are neighbors, or the same node
+
+    Inputs: 
+        a: Node 1
+        b: Mode 2
+
+    */
+
+    // Checks if a = b, OR if the adjlist includes the connection a-b OR b-a
     return a == b || adjlist.includes(a + '-' + b) || adjlist.includes(b + '-' + a);
 }
 
-// Build drag event handlers
+/* 
+Build drag event handlers
+
+These allow the nodes to not be affected by the "gravity" of the sim while being dragged
+*/
+
 function dragStarted(d, event) {
+    /*
+    At start of drag, the x and y coordinate are fixed (fx, fy) to their starting point
+
+    Inputs: 
+        d: Draggable node 
+        event: The drag event
+
+    */
     if (!event.active) simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
 }
   
 function dragged(d, event) {
+     /*
+    While dragging, the fixed location of the node is set to the info of the drag event
+
+    Inputs: 
+        d: Draggable node 
+        event: The drag event
+
+    */
     d.fx = event.x;
     d.fy = event.y;
     console.log(d.fy);
 }
   
 function dragEnded(d, event) {
+    /*
+    After the drag ends, the fixed value is set to be empty again. 
+
+    Inputs: 
+        d: Draggable node 
+        event: The drag event
+
+    */
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
 }
 
-d3.json('data/JQA_coRef-network.json').then(data => {
-     // Build constants.
+// JSON data path
+var JSON_filepath = 'data/JQA_coRef-network.json';
+
+// "data" now holds the JSON data for building the grapgh
+d3.json(JSON_filepath).then(data => {
+     
+    // Build constants. (window size and length of transitions)
     let margin = {top: 30, right: 30, bottom: 30, left: 30},
-        width = 960,
-        height = 700,
-        duration = 300;
+        width = 960, height = 700, duration = 300;
 
     // Build container.
     const svg = d3.select('.network')
@@ -85,6 +133,7 @@ d3.json('data/JQA_coRef-network.json').then(data => {
         d3.schemeSet2
         // d3.schemeTableau10
     )
+    // Sets the range of values as the min and max modularity (repeats below)
     .domain(d3.extent(data.nodes.map(node => node.modularity)));
 
     let nodeScale = d3.scaleLinear()
@@ -102,7 +151,7 @@ d3.json('data/JQA_coRef-network.json').then(data => {
     // Instantiate variables for later use.
     let link, node, label;
 
-    // Build force simulation.
+    // Build force simulation. Mostly boilerplate from docs
     // Documentation: https://devdocs.io/d3~7/d3-force#forcesimulation
     const simulation = d3.forceSimulation()
         .force("charge", d3.forceManyBody()
@@ -151,31 +200,42 @@ d3.json('data/JQA_coRef-network.json').then(data => {
 
     // Draw network function.
     function chart(dataset) {
+        /*
+        Draws the network graph 
 
+
+        */
+
+        // Creates an array, each entry being info on a single node/link
         let nodes = dataset.nodes.map(d => Object.create(d));
         let links = dataset.links.map(d => Object.create(d));
 
-        links = links.filter(function (d) { return d.weight >= 0.5 });
-        nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
-        nodes = nodes.filter(function (d) {return d.degree >= 20});
-        links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
+        // links = links.filter(function (d) { return d.weight >= 0.5 });
+        // nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
+        // nodes = nodes.filter(function (d) {return d.degree >= 20});
+        // links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
 
         // Draw links.
-        link = d3.select('.links')
+        link = d3.select('.links') // Selects all links 
             .selectAll('line')
             .data(links)
-            .join(
+            .join( // Handles enter, update, exit selection 
                 enter => enter.append('line')
                     .attr('class', 'edge')
+                    
+                    // Sets the starting and ending coordinates for links
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y)
+
+                    // Sets the color and width of each line 
                     .attr('stroke', d => nodeColor(d.source['modularity']) )
                     .attr('stroke-width', d => edgeScale(d.__proto__.weight) )
                     .attr('opacity', 0.6),
-                update => update,
-                exit => exit.transition().remove()
+                
+                update => update, // Unchanged
+                exit => exit.transition().remove() // When links no longer have corrosponding data points, they fade out
             );
 
         // Draw nodes.
@@ -185,13 +245,20 @@ d3.json('data/JQA_coRef-network.json').then(data => {
             .join(
                 enter => enter.append('circle')
                     .attr('class', 'node')
+
+                    // Sets coordinates of center of node
                     .attr("cx", d => d.x)
                     .attr("cy", d => d.y)
+
+                    // Sets size and color 
                     .attr('r', (d) => nodeScale(d.degree))
                     .attr('fill', (d) => nodeColor(d.modularity)),
-                update => update,
-                exit => exit.transition().remove()
+
+                update => update, // Unchanged 
+                exit => exit.transition().remove() // Will fade out on exit 
             )
+
+            // Makes the dragging work 
             .call(d3.drag()
                 .on("start", dragStarted)
                 .on("drag", dragged)
@@ -207,36 +274,42 @@ d3.json('data/JQA_coRef-network.json').then(data => {
                 enter => enter.append('text')
                         .attr('class', 'label')
                         .attr('pointer-events', 'none')
+                    // Label is shown if degree over 3.0, and it is scaled based off degree    
                     .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
-                update => update
+
+                update => update // If text id updated, handled the same way 
                     .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
-                exit => exit.transition().remove()
+
+                exit => exit.transition().remove() // transition out 
             )
         
-        // Reheat simulation.
+        // Reheat simulation. (Gravity) 
         simulation.alphaDecay(0.01).restart();
 
     };
 
     // Move mouse over/out.
-    node.on('mouseover', function(event, d, i) {
+    node.on('mouseover', function(event, d, i) { // Each node listens for mouseover 
 
-        // Focus
+        // Gets the ID of the node that is highlighted over 
         let source = d3.select(event.target).datum().__proto__.id;
 
         node.style('opacity', function(o) {
+            // If node (o) is neighbor of source, opacity is 1, otherwise it is set to .1
             return neigh(source, o.__proto__.id) ? 1: 0.1;
         });
 
         link.style('opacity', function(o) {
+            // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is 0
             return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.2;
         });
 
         label
             .text( d => d.id)
             .attr('display', function(o) {
+                // If a node is neighbor with source, show text -- if not, don't.
                 return neigh(source, o.__proto__.id) ? "block" : "none";
             });
 
@@ -246,16 +319,13 @@ d3.json('data/JQA_coRef-network.json').then(data => {
             ['Community', formatNumbers(d.modularity, 2)],
             ['Betweenness', formatNumbers(d.betweenness, 3)],
             ['Eigenvector', formatNumbers(d.eigenvector, 3)],
-            ['filt', formatNumbers(d.filt, 3)],
-
-
         ];
 
         tooltip
-            .transition(duration)
+            .transition(duration) // Sets attributes like transition duration and location. 
                 .attr('pointer-events', 'none')
                 .style('opacity', 0.97)
-                .style("right", (pos.x) + "px")
+                .style("left", (pos.x) + "px")
                 .style("top", (pos.y) + "px");
             
         toolHeader
@@ -274,15 +344,14 @@ d3.json('data/JQA_coRef-network.json').then(data => {
 
     node.on('mousemove', function(event) {
         tooltip
-        .style("left", (event.pageX + 10) + "px")  // Position tooltip 10px right of the cursor
-        .style("top", (event.pageY + 10) + "px")  // Position tooltip 10px below the cursor
-    
-        })
+            .style("left", (pos.x) + "px")
+            .style("top", (pos.y) + "px")
+    })
 
-    node.on('mouseout', function () {
+    node.on('mouseout', function () { // hides tooltip when not highlighting node
         tooltip.transition(duration).style('opacity', 0);
 
-        // Unfocus.
+        // Unfocus -- Returns all nodes/links/text to default once mouse leaves
         label
             .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
             .attr('display', 'block');
@@ -291,5 +360,3 @@ d3.json('data/JQA_coRef-network.json').then(data => {
     })
 
 });
-
-
