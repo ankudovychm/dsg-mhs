@@ -25,6 +25,7 @@ function neigh(a, b) {
     return a == b || adjlist.includes(a + '-' + b) || adjlist.includes(b + '-' + a);
 }
 
+
 /* 
 Build drag event handlers
 
@@ -227,7 +228,7 @@ d3.json(JSON_filepath).then(data => {
         */
 
         // Creates an array, each entry being info on a single node/link
-        let nodes = dataset.nodes.map(d => Object.create(d));  // .filter(function (d) { return d.degree >= 15 });
+        let nodes = dataset.nodes.map(d => Object.create(d)).filter(function (d) { return d.degree >= 15 });
         let links = dataset.links.map(d => Object.create(d));
 
         // links = links.filter(function (d) { return d.weight >= 0.5 });
@@ -307,7 +308,14 @@ d3.json(JSON_filepath).then(data => {
         // Reheat simulation. (Gravity) 
         window.simulation.alphaDecay(0.01).restart();
 
-    };
+        // Filter out links 
+        window.filteredNodeIds = new Set(nodes.map(node => node.id));
+
+        link.style('opacity', function(o) {
+            // Check if either the source or target of the link is in the filtered nodes list
+            return window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id) ? 1 : 0.0; // Full opacity if connected to a filtered node
+        });
+     };
 
     // Move mouse over/out.
     node.on('mouseover', function(event, d, i) { // Each node listens for mouseover 
@@ -320,9 +328,34 @@ d3.json(JSON_filepath).then(data => {
             return neigh(source, o.__proto__.id) ? 1: 0.1;
         });
 
+        
         link.style('opacity', function(o) {
             // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is 0
             return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.2;
+        });
+
+        link.style('opacity',function(o) { 
+
+            // Bool expression that returns T/F of if a given node is a neighbor of source node
+            let isNeigh = o.__proto__.source.id == source || o.__proto__.target.id == source;
+
+            // Bool expression that returns T/F if a links target and source are BOTH visible
+            let inFiltered = window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id);
+
+           // If the node is a neighboor and in the filtered list, fully visible
+            if (isNeigh && inFiltered) {
+                return 1;
+            }
+            
+            // If the node is not neighboor but in the filtered list, dimmed
+            else if (!isNeigh && inFiltered){
+                return 0.2;
+            }
+        
+            // Otherwise, return 0 
+            else {
+                return 0;
+            }
         });
 
         label
@@ -374,8 +407,14 @@ d3.json(JSON_filepath).then(data => {
         label
             .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
             .attr('display', 'block');
+
         node.style('opacity', 1);
-        link.style('opacity',1);
+
+        // Resets the link to their original (possibly filtered) opacity 
+        link.style('opacity', function(o) {
+            // Check if either the source or target of the link is in the filtered nodes list
+            return window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id) ? 1 : 0.0; // Full opacity if connected to a filtered node
+        });
 
     })
 
