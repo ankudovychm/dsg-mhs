@@ -1,3 +1,7 @@
+import { BehaviorSubject } from "rxjs/Rx";
+ 
+publi
+
 // Utilities.
 function formatNumbers(d) {
     /*
@@ -78,24 +82,6 @@ function dragEnded(d, event) {
 // JSON data path
 var JSON_filepath = 'data/JQA_coRef-network.json';
 
-// Filter Params 
-
-// Degree
-var deg_min = 5
-var deg_max = 30
-
-// Community 
-var com_min = 0 
-var com_max = 1 
-
-
-// Betweeness 
-var bet_min = .1
-var bet_max = .3
-
-// Eigenvector
-eig_min = .1
-eig_max = .3
 
 // "data" now holds the JSON data for building the grapgh
 d3.json(JSON_filepath).then(data => {
@@ -165,6 +151,25 @@ d3.json(JSON_filepath).then(data => {
         .domain([0, d3.max(data.nodes.map(node => node.degree))])
         .range([16, 32]);
 
+        document.getElementById('minrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('minrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+
+        document.getElementById('maxrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('maxrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+
+        document.getElementById('minrange').value = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('minnum').value = d3.extent(data.nodes.map(node => node.degree))[0];
+
+        document.getElementById('maxrange').value = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('maxnum').value = d3.extent(data.nodes.map(node => node.degree))[1];
+
+        // min degree
+        console.error(d3.extent(data.nodes.map(node => node.degree))[0]);
+
+        // max degree 
+        console.error(d3.extent(data.nodes.map(node => node.degree))[1]);
+
+
     let edgeScale = d3.scaleLinear()
         .domain(d3.extent(data.links.map(link => link.weight)))
         .range([3, 20])
@@ -214,7 +219,27 @@ d3.json(JSON_filepath).then(data => {
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y);
         }
+        
     );
+
+    // Filter Params 
+
+    // Degree
+    var deg_min = document.getElementById('minnum').value
+    var deg_max = document.getElementById('maxnum').value
+
+    // Community 
+    var com_min = 0 
+    var com_max = 100
+
+
+    // Betweeness 
+    var bet_min = 0
+    var bet_max = 100
+
+    // Eigenvector
+    eig_min = 0
+    eig_max = 100
 
     // Draw initial graph.
     chart(data);
@@ -223,12 +248,20 @@ d3.json(JSON_filepath).then(data => {
     function chart(dataset) {
         /*
         Draws the network graph 
-
-
         */
 
         // Creates an array, each entry being info on a single node/link
-        let nodes = dataset.nodes.map(d => Object.create(d)).filter(function (d) { return d.degree >= 15 });
+        let nodes = dataset.nodes.map(d => Object.create(d))
+            .filter(function (d) { return d.degree >= deg_min })
+            .filter(function (d) { return d.degree <= deg_max })
+            .filter(function (d) { return d.modularity >= com_min })
+            .filter(function (d) { return d.modularity <= com_max })
+            .filter(function (d) { return d.betweenness >= bet_min })
+            .filter(function (d) { return d.betweenness <= bet_max })
+            .filter(function (d) { return d.eigenvector >= eig_min })
+            .filter(function (d) { return d.eigenvector <= eig_max });
+        
+        // ALl links are drawn for now, then the opacity of irrelevant ones is changed later
         let links = dataset.links.map(d => Object.create(d));
 
         // links = links.filter(function (d) { return d.weight >= 0.5 });
@@ -417,5 +450,6 @@ d3.json(JSON_filepath).then(data => {
         });
 
     })
+    
 
 });

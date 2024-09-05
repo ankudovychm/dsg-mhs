@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="../../../styles/main-dark.css"></link>
         <link rel="stylesheet" href="../../../styles/d3-dark.css"></link>
+        <link rel="stylesheet" href="slider_styles.css"></link>
 
         <script src="https://d3js.org/d3.v7.min.js"></script>   
         <!-- Dark Mode Colors
@@ -25,6 +26,7 @@
         <header id="menu">
             <script src="../../../styles/menu.js"></script>
         </header>
+        
         <div class="main-body">
             <div class="container">
 
@@ -39,10 +41,29 @@
                 <h2 class="svgTitle">Co-References</h2>
                 <div class="row justify-content-center">
                     <div class="network"></div>
-                    <script src="coRef-network.js?v1"></script>
+                    <script src="coRef-network.js?v2"></script>
                 </div>
 
+                <h3 class="deg-slider">Degree Filter</h3>
+                <div class="slider">
+                    <div class="min-value numberVal">
+                        <input type="number" min="0" max = "100" value = "25" id="minnum" disabled>
+                    </div>
+                    &nbsp; - 
+                    <div class="range-slider">
+                        <div class="progress"></div>
+                        <input type="range"class="range-min" min="0" max = "100" value = "25" id="minrange">
+                        <input type="range"class="range-max" min="0" max = "100" value = "75" id="maxrange">
+                    </div>
+                    - &nbsp;
+                    <div class="max-value numberVal">
+                        <input type="number" min = "0" max = "100" value = "75" id="maxnum" disabled>
+                    </div>
+                </div>
+                <script src="slider_script.js?v1"></script>
             </div>
+
+            
         </div>
 
     </body>
