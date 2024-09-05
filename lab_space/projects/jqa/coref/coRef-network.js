@@ -40,7 +40,7 @@ function dragStarted(d, event) {
         event: The drag event
 
     */
-    if (!event.active) simulation.alphaTarget(0.3).restart();
+    if (!event.active) window.simulation.alphaTarget(0.3).restart();
     d.fx = d.x;
     d.fy = d.y;
 }
@@ -68,13 +68,33 @@ function dragEnded(d, event) {
         event: The drag event
 
     */
-    if (!event.active) simulation.alphaTarget(0);
+    if (!event.active) window.simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
 }
 
+
 // JSON data path
 var JSON_filepath = 'data/JQA_coRef-network.json';
+
+// Filter Params 
+
+// Degree
+var deg_min = 5
+var deg_max = 30
+
+// Community 
+var com_min = 0 
+var com_max = 1 
+
+
+// Betweeness 
+var bet_min = .1
+var bet_max = .3
+
+// Eigenvector
+eig_min = .1
+eig_max = .3
 
 // "data" now holds the JSON data for building the grapgh
 d3.json(JSON_filepath).then(data => {
@@ -153,7 +173,7 @@ d3.json(JSON_filepath).then(data => {
 
     // Build force simulation. Mostly boilerplate from docs
     // Documentation: https://devdocs.io/d3~7/d3-force#forcesimulation
-    const simulation = d3.forceSimulation()
+    window.simulation = d3.forceSimulation()
         .force("charge", d3.forceManyBody()
             .strength(-1000)
             .distanceMin(100)
@@ -170,7 +190,7 @@ d3.json(JSON_filepath).then(data => {
 
 
     // Add nodes, links, & labels to simulation and tell them to move in unison with each tick.
-    simulation
+    window.simulation
         .nodes(data.nodes, d => d.id)
         .force('collide', d3.forceCollide().radius(d => nodeScale(d.degree) + 10))
         .force("link", d3.forceLink(data.links)
@@ -207,14 +227,13 @@ d3.json(JSON_filepath).then(data => {
         */
 
         // Creates an array, each entry being info on a single node/link
-        let nodes = dataset.nodes.map(d => Object.create(d));
+        let nodes = dataset.nodes.map(d => Object.create(d));  // .filter(function (d) { return d.degree >= 15 });
         let links = dataset.links.map(d => Object.create(d));
 
         // links = links.filter(function (d) { return d.weight >= 0.5 });
         // nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
-        // nodes = nodes.filter(function (d) {return d.degree >= 20});
         // links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
-
+        
         // Draw links.
         link = d3.select('.links') // Selects all links 
             .selectAll('line')
@@ -286,7 +305,7 @@ d3.json(JSON_filepath).then(data => {
             )
         
         // Reheat simulation. (Gravity) 
-        simulation.alphaDecay(0.01).restart();
+        window.simulation.alphaDecay(0.01).restart();
 
     };
 
@@ -339,7 +358,7 @@ d3.json(JSON_filepath).then(data => {
                 .html(d => `${d[0]}: ${d[1]}`)
                 .attr('pointer-events', 'none');
 
-        simulation.alphaTarget(0).restart();
+        window.simulation.alphaTarget(0).restart();
     });
 
     node.on('mousemove', function(event) {
@@ -356,7 +375,8 @@ d3.json(JSON_filepath).then(data => {
             .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
             .attr('display', 'block');
         node.style('opacity', 1);
-        link.style('opacity', 0.6);
+        link.style('opacity',1);
+
     })
 
 });
