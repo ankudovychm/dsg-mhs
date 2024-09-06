@@ -11,7 +11,7 @@
         <!-- Dark Mode Colors
             Xiketic: 110b11
             Raisin Black: 242124
-            Black Coffee: 353135
+            Black Coffee: 353135 
             Steel Teal: 688F88
             Granny Smith Apple: 91f3b6
             Opal: abc3c0;
@@ -44,23 +44,49 @@
                     <script src="coRef-network.js?v1"></script>
                 </div>
 
-                <h3 class="deg-slider">Degree Filter</h3>
-                <div class="slider">
-                    <div class="min-value numberVal">
-                        <input type="number" min="0" max = "100" value = "25" id="minnum" disabled>
+                <!--Deg filter start-->
+                <h3 class="deg-filter">Degree Filter</h3>
+                <div class="deg-slider">
+                    <div class="deg-min-value deg-numberVal">
+                        <input type="number" min="0" max = "100" value = "25" id="deg-minnum" disabled>
                     </div>
                     &nbsp; - 
-                    <div class="range-slider">
+                    <div class="deg-range-slider">
                         <div class="progress"></div>
-                        <input type="range"class="range-min" min="0" max = "100" value = "25" id="minrange">
-                        <input type="range"class="range-max" min="0" max = "100" value = "75" id="maxrange">
+                        <input type="range"class="deg-range-min" min="0" max = "100" value = "25" id="deg-minrange">
+                        <input type="range"class="deg-range-max" min="0" max = "100" value = "75" id="deg-maxrange">
                     </div>
                     - &nbsp;
-                    <div class="max-value numberVal">
-                        <input type="number" min = "0" max = "100" value = "75" id="maxnum" disabled>
+                    <div class="deg-max-value deg-numberVal">
+                        <input type="number" min = "0" max = "100" value = "75" id="deg-maxnum" disabled>
                     </div>
                 </div>
+                
+                <!--Deg filter end-->
+
+                <!--Mod filter start-->
+                <h3 class="mod-filter">Commnity Filter</h3>
+                <div class="mod-slider">
+                    <div class="mod-min-value mod-numberVal">
+                        <input type="number" min="0" max = "100" value = "25" id="mod-minnum" disabled>
+                    </div>
+                    &nbsp; - 
+                    <div class="mod-range-slider">
+                        <div class="mod-progress"></div>
+                        <input type="range"class="mod-range-min" min="0" max = "100" value = "25" id="mod-minrange">
+                        <input type="range"class="mod-range-max" min="0" max = "100" value = "75" id="mod-maxrange">
+                    </div>
+                    - &nbsp;
+                    <div class="mod-max-value mod-numberVal">
+                        <input type="number" min = "0" max = "100" value = "75" id="mod-maxnum" disabled>
+                    </div>
+                </div>
+
+                <!--Mod filter end-->
+
                 <script src="slider_script.js?v1"></script>
+                
+
             </div>
 
             

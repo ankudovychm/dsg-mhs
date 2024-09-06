@@ -20,19 +20,23 @@ function UpdateFilters(dataset,node,link,label){
     Might it be worthwhile to add advanced logical filtering (ie AND/OR between different sliders)?
     */
 
-    console.log("Degree Min:" + FilterParams.DegreeMin + '\n' +"Degree Max:" +FilterParams.DegreeMax);
+    console.log("Degree Min:" + FilterParams.DegreeMin + 
+        '\n' +"Degree Max:" +FilterParams.DegreeMax+
+        '\n'+ "Modularity Min:" + FilterParams.ModuMin + 
+        '\n' +"Modularity Max:" +FilterParams.ModuMax
+    );
 
 
     // Right now, it does this filtering for every single attribute (min and max) every time any (possible unrelated) is udated. Is there a better way? 
     let FilteredNodes = dataset.nodes.map(d => Object.create(d))
     .filter(function (d) { return d.degree >= FilterParams.DegreeMin })
-    .filter(function (d) { return d.degree <= FilterParams.DegreeMax });
-    /* .filter(function (d) { return d.modularity >= com_min })
-    .filter(function (d) { return d.modularity <= com_max })
-    .filter(function (d) { return d.betweenness >= bet_min })
+    .filter(function (d) { return d.degree <= FilterParams.DegreeMax })
+    .filter(function (d) { return d.modularity >= FilterParams.ModuMin })
+    .filter(function (d) { return d.modularity <= FilterParams.ModuMax });
+    /*.filter(function (d) { return d.betweenness >= bet_min })
     .filter(function (d) { return d.betweenness <= bet_max })
     .filter(function (d) { return d.eigenvector >= eig_min })
-    .filter(function (d) { return d.eigenvector <= eig_max }); */
+    .filter(function (d) { return d.eigenvector <= eig_max }) */
 
     // Gets only the Ids of the filtered Nodes 
     NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
@@ -247,19 +251,35 @@ d3.json(JSON_filepath).then(data => {
     // Below, all the sliders are built for filtering 
 
         // Degree slider 
-        document.getElementById('minnum').value = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('maxnum').value = d3.extent(data.nodes.map(node => node.degree))[1];
-        document.getElementById('minrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('minrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
-        document.getElementById('maxrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('maxrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
-        document.getElementById('minrange').value = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('maxrange').value = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('deg-minnum').value = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('deg-maxnum').value = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('deg-minrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('deg-minrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('deg-maxrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('deg-maxrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('deg-minrange').value = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('deg-maxrange').value = d3.extent(data.nodes.map(node => node.degree))[1];
             
     
         // The default for the filtering params are set as the max.min value in the data
-        FilterParams.DegreeMin = document.getElementById('minrange').value;
-        FilterParams.DegreeMax = document.getElementById('maxrange').value;
+        FilterParams.DegreeMin = document.getElementById('deg-minrange').value;
+        FilterParams.DegreeMax = document.getElementById('deg-maxrange').value;
+
+         // Mod slider 
+        document.getElementById('mod-minnum').value = d3.extent(data.nodes.map(node => node.modularity))[0];
+        document.getElementById('mod-maxnum').value = d3.extent(data.nodes.map(node => node.modularity))[1];
+        document.getElementById('mod-minrange').min = d3.extent(data.nodes.map(node => node.modularity))[0];
+        document.getElementById('mod-minrange').max = d3.extent(data.nodes.map(node => node.modularity))[1];
+        document.getElementById('mod-maxrange').min = d3.extent(data.nodes.map(node => node.modularity))[0];
+        document.getElementById('mod-maxrange').max = d3.extent(data.nodes.map(node => node.modularity))[1];
+        document.getElementById('mod-minrange').value = d3.extent(data.nodes.map(node => node.modularity))[0];
+        document.getElementById('mod-maxrange').value = d3.extent(data.nodes.map(node => node.modularity))[1];
+            
+    
+        // The default for the filtering params are set as the max.min value in the data
+        FilterParams.ModuMin = document.getElementById('mod-minrange').value;
+        FilterParams.ModuMax = document.getElementById('mod-maxrange').value;
+
 
   
     // Draw initial graph.
@@ -427,21 +447,42 @@ d3.json(JSON_filepath).then(data => {
     
     // Slider Listening Events
 
-    // Listens for minrange slider value change
-    d3.select("#minrange").on("change", function(){
+    // Listens for DEGREE minrange slider value change
+    d3.select("#deg-minrange").on("change", function(){
 
         // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.DegreeMin = document.getElementById('minrange').value;
+        FilterParams.DegreeMin = document.getElementById('deg-minrange').value;
         // UpdateFilters function is then ran with updated value
         UpdateFilters(data,node,link,label);
                 
     });
     
-    // Listens for maxrange slider value change
-    d3.select("#maxrange").on("change", function(){
+    // Listens for DEGREE maxrange slider value change
+    d3.select("#deg-maxrange").on("change", function(){
     
         // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.DegreeMax = document.getElementById('maxrange').value;
+        FilterParams.DegreeMax = document.getElementById('deg-maxrange').value;
+        // UpdateFilters function is then ran with updated value
+        UpdateFilters(data,node,link,label);
+                
+    
+    });
+
+      // Listens for MODULARITY minrange slider value change
+    d3.select("#mod-minrange").on("change", function(){
+
+        // When it is changed, the filterparams value is changed accordingly 
+        FilterParams.ModuMin = document.getElementById('mod-minrange').value;
+        // UpdateFilters function is then ran with updated value
+        UpdateFilters(data,node,link,label);
+                
+    });
+    
+    // Listens for DEGREE maxrange slider value change
+    d3.select("#mod-maxrange").on("change", function(){
+    
+        // When it is changed, the filterparams value is changed accordingly 
+        FilterParams.ModuMax = document.getElementById('mod-maxrange').value;
         // UpdateFilters function is then ran with updated value
         UpdateFilters(data,node,link,label);
                 
@@ -449,3 +490,4 @@ d3.json(JSON_filepath).then(data => {
     });
 
 });
+
