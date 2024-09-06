@@ -1,6 +1,3 @@
-import { BehaviorSubject } from "rxjs/Rx";
- 
-publi
 
 // Utilities.
 function formatNumbers(d) {
@@ -11,6 +8,50 @@ function formatNumbers(d) {
         d: number to be rounded
     */
     return d3.format('.2r')(d);
+}
+
+let FilterParams = {}
+
+function UpdateFilters(dataset,node,link,label){
+    /* 
+    Function run whenever a slider value is changed. Updates the nodes visible to only be those that 
+    meet all the criteria below. M
+    
+    Might it be worthwhile to add advanced logical filtering (ie AND/OR between different sliders)?
+    */
+
+    console.log("Degree Min:" + FilterParams.DegreeMin + '\n' +"Degree Max:" +FilterParams.DegreeMax);
+
+
+    // Right now, it does this filtering for every single attribute (min and max) every time any (possible unrelated) is udated. Is there a better way? 
+    let FilteredNodes = dataset.nodes.map(d => Object.create(d))
+    .filter(function (d) { return d.degree >= FilterParams.DegreeMin })
+    .filter(function (d) { return d.degree <= FilterParams.DegreeMax });
+    /* .filter(function (d) { return d.modularity >= com_min })
+    .filter(function (d) { return d.modularity <= com_max })
+    .filter(function (d) { return d.betweenness >= bet_min })
+    .filter(function (d) { return d.betweenness <= bet_max })
+    .filter(function (d) { return d.eigenvector >= eig_min })
+    .filter(function (d) { return d.eigenvector <= eig_max }); */
+
+    // Gets only the Ids of the filtered Nodes 
+    NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
+
+    // If the node is in the list, it is visible, if it is not, it isn't 
+     node.style('visibility', function(o) {
+            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+    });
+
+    // If both the target and source node are unfiltered, the links will be visible
+    link.style('visibility',function(o){
+            return NewNodes.includes(o.__proto__.source.id) && NewNodes.includes(o.__proto__.target.id) ? "visible" : "hidden";
+    });
+
+    // If a node is visible, its label will be as well
+    label.text( d => d.id).attr('visibility', function(o) {
+            // If a node is neighbor with source, show text -- if not, don't.
+            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+    });     
 }
 
 let adjlist = [] // Adjacency list for highlighting connected nodes.
@@ -150,26 +191,7 @@ d3.json(JSON_filepath).then(data => {
     let fontSizeScale = d3.scaleLinear()
         .domain([0, d3.max(data.nodes.map(node => node.degree))])
         .range([16, 32]);
-
-        document.getElementById('minrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('minrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
-
-        document.getElementById('maxrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('maxrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
-
-        document.getElementById('minrange').value = d3.extent(data.nodes.map(node => node.degree))[0];
-        document.getElementById('minnum').value = d3.extent(data.nodes.map(node => node.degree))[0];
-
-        document.getElementById('maxrange').value = d3.extent(data.nodes.map(node => node.degree))[1];
-        document.getElementById('maxnum').value = d3.extent(data.nodes.map(node => node.degree))[1];
-
-        // min degree
-        console.error(d3.extent(data.nodes.map(node => node.degree))[0]);
-
-        // max degree 
-        console.error(d3.extent(data.nodes.map(node => node.degree))[1]);
-
-
+    
     let edgeScale = d3.scaleLinear()
         .domain(d3.extent(data.links.map(link => link.weight)))
         .range([3, 20])
@@ -222,25 +244,24 @@ d3.json(JSON_filepath).then(data => {
         
     );
 
-    // Filter Params 
+    // Below, all the sliders are built for filtering 
 
-    // Degree
-    var deg_min = document.getElementById('minnum').value
-    var deg_max = document.getElementById('maxnum').value
+        // Degree slider 
+        document.getElementById('minnum').value = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('maxnum').value = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('minrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('minrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('maxrange').min = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('maxrange').max = d3.extent(data.nodes.map(node => node.degree))[1];
+        document.getElementById('minrange').value = d3.extent(data.nodes.map(node => node.degree))[0];
+        document.getElementById('maxrange').value = d3.extent(data.nodes.map(node => node.degree))[1];
+            
+    
+        // The default for the filtering params are set as the max.min value in the data
+        FilterParams.DegreeMin = document.getElementById('minrange').value;
+        FilterParams.DegreeMax = document.getElementById('maxrange').value;
 
-    // Community 
-    var com_min = 0 
-    var com_max = 100
-
-
-    // Betweeness 
-    var bet_min = 0
-    var bet_max = 100
-
-    // Eigenvector
-    eig_min = 0
-    eig_max = 100
-
+  
     // Draw initial graph.
     chart(data);
 
@@ -251,23 +272,11 @@ d3.json(JSON_filepath).then(data => {
         */
 
         // Creates an array, each entry being info on a single node/link
-        let nodes = dataset.nodes.map(d => Object.create(d))
-            .filter(function (d) { return d.degree >= deg_min })
-            .filter(function (d) { return d.degree <= deg_max })
-            .filter(function (d) { return d.modularity >= com_min })
-            .filter(function (d) { return d.modularity <= com_max })
-            .filter(function (d) { return d.betweenness >= bet_min })
-            .filter(function (d) { return d.betweenness <= bet_max })
-            .filter(function (d) { return d.eigenvector >= eig_min })
-            .filter(function (d) { return d.eigenvector <= eig_max });
+        let nodes = dataset.nodes.map(d => Object.create(d));
         
         // ALl links are drawn for now, then the opacity of irrelevant ones is changed later
         let links = dataset.links.map(d => Object.create(d));
-
-        // links = links.filter(function (d) { return d.weight >= 0.5 });
-        // nodes = nodes.filter( (d) => links.find( ({source}) => d.id === source));
-        // links = links.filter( (d) => nodes.find( ({id}) => d.id === id) );
-        
+             
         // Draw links.
         link = d3.select('.links') // Selects all links 
             .selectAll('line')
@@ -341,13 +350,6 @@ d3.json(JSON_filepath).then(data => {
         // Reheat simulation. (Gravity) 
         window.simulation.alphaDecay(0.01).restart();
 
-        // Filter out links 
-        window.filteredNodeIds = new Set(nodes.map(node => node.id));
-
-        link.style('opacity', function(o) {
-            // Check if either the source or target of the link is in the filtered nodes list
-            return window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id) ? 1 : 0.0; // Full opacity if connected to a filtered node
-        });
      };
 
     // Move mouse over/out.
@@ -361,34 +363,9 @@ d3.json(JSON_filepath).then(data => {
             return neigh(source, o.__proto__.id) ? 1: 0.1;
         });
 
-        
         link.style('opacity', function(o) {
             // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is 0
             return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.2;
-        });
-
-        link.style('opacity',function(o) { 
-
-            // Bool expression that returns T/F of if a given node is a neighbor of source node
-            let isNeigh = o.__proto__.source.id == source || o.__proto__.target.id == source;
-
-            // Bool expression that returns T/F if a links target and source are BOTH visible
-            let inFiltered = window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id);
-
-           // If the node is a neighboor and in the filtered list, fully visible
-            if (isNeigh && inFiltered) {
-                return 1;
-            }
-            
-            // If the node is not neighboor but in the filtered list, dimmed
-            else if (!isNeigh && inFiltered){
-                return 0.2;
-            }
-        
-            // Otherwise, return 0 
-            else {
-                return 0;
-            }
         });
 
         label
@@ -444,12 +421,31 @@ d3.json(JSON_filepath).then(data => {
         node.style('opacity', 1);
 
         // Resets the link to their original (possibly filtered) opacity 
-        link.style('opacity', function(o) {
-            // Check if either the source or target of the link is in the filtered nodes list
-            return window.filteredNodeIds.has(o.__proto__.source.id) && window.filteredNodeIds.has(o.__proto__.target.id) ? 1 : 0.0; // Full opacity if connected to a filtered node
-        });
-
+        link.style('opacity', 1);
+    
     })
     
+    // Slider Listening Events
+
+    // Listens for minrange slider value change
+    d3.select("#minrange").on("change", function(){
+
+        // When it is changed, the filterparams value is changed accordingly 
+        FilterParams.DegreeMin = document.getElementById('minrange').value;
+        // UpdateFilters function is then ran with updated value
+        UpdateFilters(data,node,link,label);
+                
+    });
+    
+    // Listens for maxrange slider value change
+    d3.select("#maxrange").on("change", function(){
+    
+        // When it is changed, the filterparams value is changed accordingly 
+        FilterParams.DegreeMax = document.getElementById('maxrange').value;
+        // UpdateFilters function is then ran with updated value
+        UpdateFilters(data,node,link,label);
+                
+    
+    });
 
 });

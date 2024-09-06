@@ -1,8 +1,8 @@
 const range = document.querySelectorAll('.range-slider input');
  progress = document.querySelector('.range-slider .progress');
 
-
- let gap = 10; 
+// For now needs to be minimum 1, as the max slider is on to of them in slider. this means if someone put both at 40 they'd be locked. 
+ let gap = 1; 
  const inputValue = document.querySelectorAll('.numberVal input');
 
  range.forEach(input => {
