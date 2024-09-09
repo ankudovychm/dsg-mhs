@@ -65,7 +65,7 @@
                 <!--Deg filter end-->
 
                 <!--Mod filter start-->
-                <h3 class="mod-filter">Commnity Filter</h3>
+                <h3 class="mod-filter">Community Filter</h3>
                 <div class="mod-slider">
                     <div class="mod-min-value mod-numberVal">
                         <input type="number" min="0" max = "100" value = "25" id="mod-minnum" disabled>
@@ -84,7 +84,47 @@
 
                 <!--Mod filter end-->
 
-                <script src="slider_script.js?v1"></script>
+                <!--Bet filter start-->
+                <h3 class="bet-filter">Betweenness Filter</h3>
+                <div class="bet-slider">
+                    <div class="bet-min-value bet-numberVal">
+                        <input type="number" min="0" max = "100" value = "25" id="bet-minnum" disabled>
+                    </div>
+                    &nbsp; - 
+                    <div class="bet-range-slider">
+                        <div class="bet-progress"></div>
+                        <input type="range"class="bet-range-min" min="0" max = "100" value = "25" step =".01" id="bet-minrange">
+                        <input type="range"class="bet-range-max" min="0" max = "100" value = "75" step =".01" id="bet-maxrange">
+                    </div>
+                    - &nbsp;
+                    <div class="bet-max-value bet-numberVal">
+                        <input type="number" min = "0" max = "100" value = "75" id="bet-maxnum" disabled>
+                    </div>
+                </div>
+
+                <!--Bet filter end-->
+
+                <!--eig filter start-->
+                <h3 class="eig-filter">Eigenvector Filter</h3>
+                <div class="eig-slider">
+                    <div class="eig-min-value eig-numberVal">
+                        <input type="number" min="0" max = "100" value = "25" id="eig-minnum" disabled>
+                    </div>
+                    &nbsp; - 
+                    <div class="eig-range-slider">
+                        <div class="eig-progress"></div>
+                        <input type="range"class="eig-range-min" min="0" max = "100" value = "25" step =".01" id="eig-minrange">
+                        <input type="range"class="eig-range-max" min="0" max = "100" value = "75" step =".01" id="eig-maxrange">
+                    </div>
+                    - &nbsp;
+                    <div class="eig-max-value eig-numberVal">
+                        <input type="number" min = "0" max = "100" value = "75" id="eig-maxnum" disabled>
+                    </div>
+                </div>
+
+                <!--eig filter end-->
+
+                <script src="slider_script.js?v10"></script>
                 
 
             </div>

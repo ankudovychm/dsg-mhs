@@ -64,3 +64,69 @@ mod_progress = document.querySelector('.mod-range-slider .mod-progress');
  })
 
  // Emd mod Slider
+
+ // Start bet Slider 
+
+const bet_range = document.querySelectorAll('.bet-range-slider input');
+bet_progress = document.querySelector('.bet-range-slider .bet-progress');
+
+// For now needs to be minimum 1, as the max slider is on to of them in slider. this means if someone put both at 40 they'd be locked. 
+ let bet_gap = .05; 
+ const bet_inputValue = document.querySelectorAll('.bet-numberVal input');
+
+ bet_range.forEach(input => {
+    input.addEventListener('input', e =>{
+        let bet_minrange = parseFloat(bet_range[0].value),
+        bet_maxrange = parseFloat(bet_range[1].value);
+
+        if(bet_maxrange - bet_minrange < bet_gap){
+            if(e.target.className === "bet-range-min"){
+                bet_range[0].value = bet_maxrange - bet_gap;
+            }
+            else{
+                bet_range[1].value = bet_minrange + bet_gap;
+            }
+        }
+        else{
+            bet_progress.style.left = (bet_minrange / bet_range[0].max) * 100 + '%';
+            bet_progress.style.right = 100 - (bet_maxrange / bet_range[1].max) * 100 + '%';
+            bet_inputValue[0].value = bet_minrange;
+            bet_inputValue[1].value = bet_maxrange;
+        }
+    })
+ })
+
+ // End bet Slider
+
+ // Start eig Slider 
+
+const eig_range = document.querySelectorAll('.eig-range-slider input');
+eig_progress = document.querySelector('.eig-range-slider .eig-progress');
+
+// For now needs to be minimum 1, as the max slider is on to of them in slider. this means if someone put both at 40 they'd be locked. 
+ let eig_gap = .05; 
+ const eig_inputValue = document.querySelectorAll('.eig-numberVal input');
+
+ eig_range.forEach(input => {
+    input.addEventListener('input', e =>{
+        let eig_minrange = parseFloat(eig_range[0].value),
+        eig_maxrange = parseFloat(eig_range[1].value);
+
+        if(eig_maxrange - eig_minrange < eig_gap){
+            if(e.target.className === "eig-range-min"){
+                eig_range[0].value = eig_maxrange - eig_gap;
+            }
+            else{
+                eig_range[1].value = eig_minrange + eig_gap;
+            }
+        }
+        else{
+            eig_progress.style.left = (eig_minrange / eig_range[0].max) * 100 + '%';
+            eig_progress.style.right = 100 - (eig_maxrange / eig_range[1].max) * 100 + '%';
+            eig_inputValue[0].value = eig_minrange;
+            eig_inputValue[1].value = eig_maxrange;
+        }
+    })
+ })
+
+ // Emd eig Slider
