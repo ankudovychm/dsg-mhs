@@ -60,15 +60,15 @@ function UpdateFilters(dataset,node,link,label){
     });
 
     // If a node is visible, its label will be as well
-    label.text( d => d.id).attr('display', function(o) {
+    label.text( d => d.id).attr('visibility', function(o) {
             // If a node is neighbor with source, show text -- if not, don't.
 
             if (NewNodes.includes(o.__proto__.id) && o.__proto__.degree > 3) {
-                return "block";
+                return "visible";
             }
             
             else {
-                return "none";
+                return "hidden";
             }
     });     
 }
@@ -148,13 +148,14 @@ d3.json(JSON_filepath).then(data => {
      
     // Build constants. (window size and length of transitions)
     let margin = {top: 30, right: 30, bottom: 30, left: 30},
-        width = 960, height = 700, duration = 300;
+        width = 850, height = 700, duration = 300;
 
     // Build container.
     const svg = d3.select('.network')
     .append('svg')
         .attr("height", height + margin.top + margin.bottom) // Contained.
         .attr("width", width + margin.right + margin.left)
+        
     .call(d3.zoom()
         .scaleExtent([0.15, 6])
         .on("zoom", function (event) { // Add zooming.

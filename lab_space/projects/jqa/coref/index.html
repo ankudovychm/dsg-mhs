@@ -4,8 +4,8 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="../../../styles/main-dark.css"></link>
-        <link rel="stylesheet" href="../../../styles/d3-dark.css"></link>
-        <link rel="stylesheet" href="slider_styles.css"></link>
+        <link rel="stylesheet" href="../../../styles/d3-dark.css?v1"></link>
+        <link rel="stylesheet" href="slider_styles.css?v1"></link>
 
         <script src="https://d3js.org/d3.v7.min.js"></script>   
         <!-- Dark Mode Colors
@@ -30,7 +30,7 @@
         <div class="main-body">
             <div class="container">
 
-                <h1 class="title">Network Analysis</h1>
+                <h1 class="title">Co-Reference Network Analysis</h1>
 
                 <div class="row justify-content-center">
                     <div class="column">
@@ -38,14 +38,22 @@
                     </div>
                 </div>
 
-                <h2 class="svgTitle">Co-References</h2>
-                <div class="row justify-content-center">
+                <div class="Chart-Holder">
+
+                <h2 style="color: #7a7369;" class="title">Chart 1</h2>
+                <div style="background-color: #ffffff;" class="main-body">
+                    
+                    
                     <div class="network"></div>
                     <script src="coRef-network.js?v1"></script>
                 </div>
 
+                <h2 style="color: #7a7369;" class="title">Filters</h2>
+                <div class="Filter-Container">
+
+                <div class="child">
                 <!--Deg filter start-->
-                <h3 class="deg-filter">Degree Filter</h3>
+                <h3 style="color: #7a7369;" class="deg-filter">Degree Filter</h3>
                 <div class="deg-slider">
                     <div class="deg-min-value deg-numberVal">
                         <input type="number" min="0" max = "100" value = "25" id="deg-minnum" disabled>
@@ -61,11 +69,12 @@
                         <input type="number" min = "0" max = "100" value = "75" id="deg-maxnum" disabled>
                     </div>
                 </div>
-                
                 <!--Deg filter end-->
+                </div>
 
+                <div class="child">
                 <!--Mod filter start-->
-                <h3 class="mod-filter">Community Filter</h3>
+                <h3 style="color: #7a7369;" class="mod-filter">Community Filter</h3>
                 <div class="mod-slider">
                     <div class="mod-min-value mod-numberVal">
                         <input type="number" min="0" max = "100" value = "25" id="mod-minnum" disabled>
@@ -81,11 +90,14 @@
                         <input type="number" min = "0" max = "100" value = "75" id="mod-maxnum" disabled>
                     </div>
                 </div>
-
                 <!--Mod filter end-->
+                </div>
+
+                 
 
                 <!--Bet filter start-->
-                <h3 class="bet-filter">Betweenness Filter</h3>
+                <div class="child">
+                <h3 style="color: #7a7369;" class="bet-filter">Betweenness Filter</h3>
                 <div class="bet-slider">
                     <div class="bet-min-value bet-numberVal">
                         <input type="number" min="0" max = "100" value = "25" id="bet-minnum" disabled>
@@ -103,9 +115,11 @@
                 </div>
 
                 <!--Bet filter end-->
+                </div>
 
                 <!--eig filter start-->
-                <h3 class="eig-filter">Eigenvector Filter</h3>
+                <div class="child">
+                <h3 style="color: #7a7369;" class="eig-filter">Eigenvector Filter</h3>
                 <div class="eig-slider">
                     <div class="eig-min-value eig-numberVal">
                         <input type="number" min="0" max = "100" value = "25" id="eig-minnum" disabled>
@@ -123,9 +137,13 @@
                 </div>
 
                 <!--eig filter end-->
+                </div>
+
+                </div>
 
                 <script src="slider_script.js?v10"></script>
                 
+            </div>
 
             </div>
 

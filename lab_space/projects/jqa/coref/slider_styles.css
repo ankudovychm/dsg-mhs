@@ -1,20 +1,42 @@
+
+.Filter-Container { 
+    display: grid; 
+    grid-template-columns: 2fr 2fr; 
+    grid-gap: 1px; 
+    width: 50%; 
+} 
+.child { 
+    margin: 5px; 
+
+}
+
+.Chart-Holder {
+
+    background-color: #ffffff;
+    border-radius: 20px;
+}
+
+
+
 /* Deggree Slider Start */
 .deg-slider{
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;   
-    width: 600px;  
+    width: 500px;  
     height: 80px;
-    background: #ffffff; 
+    background: #363430; 
     border-radius: 20px;  
+    outline: #7a7369;
+
 }
 
 .deg-slider input[type="number"]{
     width: 50px;
     height: 30px;
-    background: #fff;
-    border: 1px solid #ddd; 
+    background: #ddd;
+    border: 1px solid #fff; 
     font-size: 15px;
     font-weight: 700;
     text-align: center;
@@ -28,9 +50,9 @@
 
 .deg-slider .deg-range-slider {
     position: relative;
-    width: 400px;
+    width: 300px;
     height: 5px;
-    background: #ddd;
+    background: #363430;
     outline: none;
     top: 1px;
     margin:10px
@@ -40,7 +62,7 @@
     left: 0%;
     right: 0%;
     height: 100%;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
     position: absolute;
 }
@@ -61,7 +83,7 @@
     -webkit-appearance: none;
     width: 17px;
     height: 17px;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
 
 
@@ -74,17 +96,17 @@
     display: flex;
     justify-content: center;
     align-items: center;   
-    width: 600px;  
+    width: 500px;  
     height: 80px;
-    background: #ffffff; 
+    background: #363430; 
     border-radius: 20px;  
 }
 
 .mod-slider input[type="number"]{
     width: 50px;
     height: 30px;
-    background: #fff;
-    border: 1px solid #ddd; 
+    background: #ddd;
+    border: 1px solid #fff; 
     font-size: 15px;
     font-weight: 700;
     text-align: center;
@@ -98,9 +120,9 @@
 
 .mod-slider .mod-range-slider {
     position: relative;
-    width: 400px;
+    width: 300px;
     height: 5px;
-    background: #ddd;
+    background: #363430;
     outline: none;
     top: 1px;
     margin:10px
@@ -110,7 +132,7 @@
     left: 0%;
     right: 0%;
     height: 100%;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
     position: absolute;
 }
@@ -131,7 +153,7 @@
     -webkit-appearance: none;
     width: 17px;
     height: 17px;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
 
 
@@ -144,17 +166,17 @@
     display: flex;
     justify-content: center;
     align-items: center;   
-    width: 600px;  
+    width: 500px;  
     height: 80px;
-    background: #ffffff; 
+    background: #363430; 
     border-radius: 20px;  
 }
 
 .bet-slider input[type="number"]{
     width: 50px;
     height: 30px;
-    background: #fff;
-    border: 1px solid #ddd; 
+    background: #ddd;
+    border: 1px solid #fff; 
     font-size: 15px;
     font-weight: 700;
     text-align: center;
@@ -168,9 +190,9 @@
 
 .bet-slider .bet-range-slider {
     position: relative;
-    width: 400px;
+    width: 300px;
     height: 5px;
-    background: #ddd;
+    background: #363430;
     outline: none;
     top: 1px;
     margin:10px
@@ -180,7 +202,7 @@
     left: 0%;
     right: 0%;
     height: 100%;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
     position: absolute;
 }
@@ -201,7 +223,7 @@
     -webkit-appearance: none;
     width: 17px;
     height: 17px;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
 
 
@@ -214,17 +236,17 @@
     display: flex;
     justify-content: center;
     align-items: center;   
-    width: 600px;  
+    width: 500px;  
     height: 80px;
-    background: #ffffff; 
+    background: #363430; 
     border-radius: 20px;  
 }
 
 .eig-slider input[type="number"]{
     width: 50px;
     height: 30px;
-    background: #fff;
-    border: 1px solid #ddd; 
+    background: #ddd;
+    border: 1px solid #fff; 
     font-size: 15px;
     font-weight: 700;
     text-align: center;
@@ -238,9 +260,9 @@
 
 .eig-slider .eig-range-slider {
     position: relative;
-    width: 400px;
+    width: 300px;
     height: 5px;
-    background: #ddd;
+    background: #363430;
     outline: none;
     top: 1px;
     margin:10px
@@ -250,7 +272,7 @@
     left: 0%;
     right: 0%;
     height: 100%;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
     position: absolute;
 }
@@ -271,7 +293,7 @@
     -webkit-appearance: none;
     width: 17px;
     height: 17px;
-    background: #17a288;
+    background: #7a7369;
     border-radius: 50px;
 
 

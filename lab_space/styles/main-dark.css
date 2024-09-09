@@ -37,13 +37,15 @@ a {
     max-width: 1080px;
     margin: 50px auto 20px auto !important;
     float: none !important;
-    background-color: #242124;
+    background-color: #ffffff;
     color: #fdeed8;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: justify;
 }
+
+
 
 .column {
     float: center;
@@ -120,6 +122,7 @@ img {
 .title {
     text-align: center;
 }
+
 
 .subTitle {
     text-align: center;
