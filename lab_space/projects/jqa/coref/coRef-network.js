@@ -49,6 +49,7 @@ function UpdateFilters(dataset,node,link,label){
     // Gets only the Ids of the filtered Nodes 
     NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
 
+
     // If the node is in the list, it is visible, if it is not, it isn't 
      node.style('visibility', function(o) {
             return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
@@ -368,6 +369,9 @@ d3.json(JSON_filepath).then(data => {
 
         // Creates an array, each entry being info on a single node/link
         let nodes = dataset.nodes.map(d => Object.create(d));
+
+        // This value will change when filtered, but it is set to default at all nodes 
+        NewNodes = nodes.map(function(nodes) { return nodes.id; });
         
         // ALl links are drawn for now, then the opacity of irrelevant ones is changed later
         let links = dataset.links.map(d => Object.create(d));
@@ -465,9 +469,9 @@ d3.json(JSON_filepath).then(data => {
 
         label
             .text( d => d.id)
-            .attr('display', function(o) {
+            .attr('visibility', function(o) {
                 // If a node is neighbor with source, show text -- if not, don't.
-                return neigh(source, o.__proto__.id) ? "block" : "none";
+                return neigh(source, o.__proto__.id) ? "visible" : "hidden";
             });
 
         
@@ -510,7 +514,15 @@ d3.json(JSON_filepath).then(data => {
     node.on('mouseout', function () { // hides tooltip when not highlighting node
         tooltip.transition(duration).style('opacity', 0);
 
-        // Unfocus -- Returns all nodes/links/text to default once mouse leaves
+        // First, hide text that is tied to a filtered away node
+        label
+        .text( d => d.id)
+        .attr('visibility', function(o) {
+            // If a node is neighbor with source, show text -- if not, don't.
+            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+        });
+
+        // Then, only display on the remaining if degree is above 3
         label
             .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
             .attr('display', 'block');
