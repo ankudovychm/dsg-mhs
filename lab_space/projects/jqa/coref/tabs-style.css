@@ -136,9 +136,9 @@ html {
 .menu__item.item-active {
     display: block;
     background-color: #ffffff;
-    -webkit-border-radius: 10px 10px 10px 10px;
-	-moz-border-radius: 10px 10px 10px 10px;
-	border-radius: 10px 10px 10px 10px;
+    -webkit-border-radius: 0px 10px 10px 10px;
+	-moz-border-radius: 0px 10px 10px 10px;
+	border-radius: 0px 10px 10px 10px;
     color: #7a7369;
 
 

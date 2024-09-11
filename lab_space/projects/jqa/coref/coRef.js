@@ -1,11 +1,12 @@
 
 // Utilities.
 
-
-function sleep(ms = 0) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
+function setProgressValues(selector) {
+    $(selector).css({
+        'left': '20%',
+        'right': '20%'
+    });
+}
 
 function formatNumbers(d) {
     /*

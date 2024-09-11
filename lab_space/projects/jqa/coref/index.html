@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="../../../styles/main-dark.css?v1"></link>
         <link rel="stylesheet" href="../../../styles/d3-dark.css?v1"></link>
-        <link rel="stylesheet" href="slider_styles.css?v1"></link>
+        <link rel="stylesheet" href="slider_styles.css?v2"></link>
         <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link rel = "stylesheet" href ="tabs-style.css?v2">
 
@@ -32,7 +32,6 @@
         </header>
         
         <div class="main-body">
-            <div id="tabpressed"></div>
 
             <div class = "tab-menu">
                 <h1>Co-reference Network Map</h1>
@@ -66,7 +65,7 @@
                         <p style=" padding-left: 20px;">
                             Here, discuss JQA in this time period<br><br>
                             
-                                <div id="G-1" class="Chart-Holder">
+                                <div id="G-2" class="Chart-Holder">
                             
                                 </div>
                                 <br><br>
@@ -80,12 +79,9 @@
                         <p style=" padding-left: 20px;" > 
                             Here, discuss how he was during this time period
 
-                            <div id="G-2" class="Chart-Holder">
-                                
-                                
+                            <div id="G-3" class="Chart-Holder">
                             </div>
                             <br><br>
-
 
                         </p>
                     </article>
@@ -97,6 +93,9 @@
                         <p style=" padding-left: 20px;"> 
                             Here, discuss how he was during this time period
 
+                            <div id="G-4" class="Chart-Holder">
+                            </div>
+                            <br><br>
                         </p>
                     </article>
 
@@ -106,6 +105,9 @@
                         <p style=" padding-left: 20px;">
                             Here, discuss how he was during this time period
 
+                            <div id="G-5" class="Chart-Holder">
+                            </div>
+                            <br><br>
                         </p>
                     </article>
 
@@ -115,6 +117,9 @@
                         <p style=" padding-left: 20px;" >
                             Here, discuss how he was during this time period
                             
+                            <div id="G-6" class="Chart-Holder">
+                            </div>
+                            <br><br>
                         </p>
                     </article>
 
@@ -123,11 +128,15 @@
                 
                 <!--  Filters! -->
                 <br>
+                
+                <!-- Hides the filters by default (because the first tab is the about tab)-->
+                <div style="visibility: hidden;" id="FiltersandTitle">
+                
                 <div class="Filter-Title">
                     <br>
                 <h2 style="color: #7a7369;" class="title">Filters</h2>
                 </div>
-                <div class="Filter-Container">
+                <div  class="Filter-Container">
 
                 <div class="child">
                 <!--Deg filter start-->
@@ -218,6 +227,8 @@
                 </div>
 
                 </div> <!-- ends filters -->
+
+            </div>
                 <script src="slider_script.js?v1"></script>
             </div>
             <script src='http://code.jquery.com/jquery.min.js'></script>
@@ -227,22 +238,39 @@
             
                     // Create a mapping for each tab and the corresponding graph script to load
                     var graphMapping = {
-                        "item-2": "early.js",  // Script for Tab 2 (existing graph)
-                        "item-3": "earlypol.js", // Replace with the actual script for Tab 3
-                       // "item-4": "graph4.js", // Replace with the actual script for Tab 4
-                        //"item-5": "graph5.js"  // Replace with the actual script for Tab 5
+                        "item-2": "early.js",  
+                        "item-3": "earlypol.js", 
+                       // "item-4": ".js", 
+                        //"item-5": ".js", 
+                        //"item-6": ".js"
                     };
 
+                    // holds the contianer ID for each of the tabs for where the chart should go 
                     var ContainerMapping = {
-                        "item-2": "G-1",  // Script for Tab 2 (existing graph)
-                        "item-3": "G-2", // Replace with the actual script for Tab 3
-                       // "item-4": ".G-3", // Replace with the actual script for Tab 4
-                        //"item-5": ".G-4"  // Replace with the actual script for Tab 5
+                        "item-2": "G-2",  
+                        "item-3": "G-3", 
+                        "item-4": ".G-4", 
+                        "item-5": ".G-5",  
+                        "item-6": ".G-6"
                     };
             
                     $menu_tabs.on("click", function(e) {
                         e.preventDefault();
-            
+
+                        // Sets the slider progress bars back to their default lenghts 
+                        $('.deg-slider .deg-range-slider .progress').css({
+                            'left': '0%', 'right': '0%'});
+
+                        $('.mod-slider .mod-range-slider .mod-progress').css({
+                            'left': '0%', 'right': '0%'});
+
+                        $('.bet-slider .bet-range-slider .bet-progress').css({
+                            'left': '0%', 'right': '0%'});
+
+                        $('.eig-slider .eig-range-slider .eig-progress').css({
+                            'left': '0%', 'right': '0%'});
+                    
+
                         // Store the target article ID (hash) before fade out begins
                         var targetArticleID = this.hash;
             
@@ -251,7 +279,7 @@
                         $(this).addClass('active'); // Add active class to clicked tab
             
                         var active_tab = this.href.toString().substring(this.href.toString().indexOf("#") + 1);
-                        document.getElementById("tabpressed").value = active_tab;
+
             
                         // Clear all graphs from all tabs before rendering the new one
                         clearAllGraphs();
@@ -270,6 +298,19 @@
                          // Check if the tab has a corresponding graph script
                          if (graphMapping[active_tab]) {
                             loadGraph(graphMapping[active_tab], ContainerMapping[active_tab]); // Load the corresponding graph into the correct container
+                        }
+
+                       // Only shows filters if not on the info tab
+                        if (active_tab != "item-1"){
+                            $("#FiltersandTitle").css("visibility","visible");
+                        }
+
+                        else {
+                            $("#FiltersandTitle").css("visibility","hidden");
+                            $('.menu__item.item-active').css({
+                                'left': '0%', 'right': '0%'});
+
+                               
                         }
 
                     });
@@ -297,9 +338,6 @@
                     }
                 });
             </script>
-            
-            
-            
             
     </body>
     
