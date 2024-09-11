@@ -6,7 +6,11 @@
         <link rel="stylesheet" href="../../../styles/main-dark.css?v1"></link>
         <link rel="stylesheet" href="../../../styles/d3-dark.css?v1"></link>
         <link rel="stylesheet" href="slider_styles.css?v1"></link>
+        <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel = "stylesheet" href ="tabs-style.css?v2">
 
+        <script type="text/javascript" src="coRef.js?v1"></script> <!-- Holds the code for the network viz-->
+        
         <script src="https://d3js.org/d3.v7.min.js"></script>   
         <!-- Dark Mode Colors
             Xiketic: 110b11
@@ -28,27 +32,101 @@
         </header>
         
         <div class="main-body">
-            <div class="container">
+            <div id="tabpressed"></div>
 
-                <h1 class="title">Co-Reference Network Analysis</h1>
+            <div class = "tab-menu">
+                <h1>Co-reference Network Map</h1>
+                <ul class = "menu__tabs">
 
-                <div class="row justify-content-center">
-                    <div class="column">
-                        <p>Network introduction...</p>
-                    </div>
-                </div>
+                    <li><a class="active" href="#item-1"><i class = "fa fa-about"></i> About</a></li>
+                
+                    <li><a  href="#item-2"><i class = "fa fa-early"></i> Early years</a></li>
 
-                <div class="Chart-Holder">
+                    <li><a  href="#item-3"><i class = "fa fa-earlypol"></i> Early Politics</a></li>
 
-                <h2 style="color: #7a7369;" class="title">Chart 1</h2>
-                <div style="background-color: #ffffff;" class="main-body">
-                    
-                    
-                    <div class="network"></div>
-                    <script src="coRef-network.js?v2"></script>
-                </div>
+                    <li><a  href="#item-4"><i class = "fa fa-secstate"></i> Sec. of State</a></li>
 
+                    <li><a  href="#item-5"><i class = "fa fa-pres"></i> President</a></li>
+
+                    <li><a  href="#item-6"><i class = "fa fa-late"></i> Later Years</a></li>
+
+                </ul>
+                <section class = "menu--wrapper">
+
+                    <article id = "item-1" class = "menu__item item-active">
+                        <br>
+                        <h3 style="text-align: center;">About</h3>
+                        <p style=" padding-left: 20px;">Talk about the idea of co-ref</p>
+                    </article>
+
+
+                    <article id = "item-2" class = "menu__item">
+                        <br>
+                        <h3 style="text-align: center;">Early Years (1779 - 1793)</h3><br>
+                        <p style=" padding-left: 20px;">
+                            Here, discuss JQA in this time period<br><br>
+                            
+                                <div id="G-1" class="Chart-Holder">
+                            
+                                </div>
+                                <br><br>
+                        </p>
+    
+                    </article>
+
+                    <article id = "item-3" class = "menu__item">
+                        <br>
+                        <h3 style="text-align: center;">Early Political Career (1793 - 1817)</h3>
+                        <p style=" padding-left: 20px;" > 
+                            Here, discuss how he was during this time period
+
+                            <div id="G-2" class="Chart-Holder">
+                                
+                                
+                            </div>
+                            <br><br>
+
+
+                        </p>
+                    </article>
+
+
+                    <article id = "item-4" class = "menu__item">
+                        <br>
+                        <h3 style="text-align: center;">Secretary of State (1817 to 1825)</h3>
+                        <p style=" padding-left: 20px;"> 
+                            Here, discuss how he was during this time period
+
+                        </p>
+                    </article>
+
+                    <article id = "item-5" class = "menu__item">
+                        <br>
+                        <h3 style="text-align: center;">President (1825 - 1829)</h3>
+                        <p style=" padding-left: 20px;">
+                            Here, discuss how he was during this time period
+
+                        </p>
+                    </article>
+
+                    <article id = "item-6" class = "menu__item">
+                        <br>
+                        <h3 style="text-align: center;">Late Congressional Career (1830 - 1848)</h3>
+                        <p style=" padding-left: 20px;" >
+                            Here, discuss how he was during this time period
+                            
+                        </p>
+                    </article>
+
+
+                </section>
+                
+                <!--  Filters! -->
+                <br>
+                <div class="Filter-Title">
+                    <br>
                 <h2 style="color: #7a7369;" class="title">Filters</h2>
+                </div>
                 <div class="Filter-Container">
 
                 <div class="child">
@@ -139,16 +217,91 @@
                 <!--eig filter end-->
                 </div>
 
-                </div>
-
+                </div> <!-- ends filters -->
                 <script src="slider_script.js?v1"></script>
-                
             </div>
-
-            </div>
-
+            <script src='http://code.jquery.com/jquery.min.js'></script>
+            <script type="text/javascript">
+                $(function() {
+                    var $menu_tabs = $('.menu__tabs li a');
             
-        </div>
+                    // Create a mapping for each tab and the corresponding graph script to load
+                    var graphMapping = {
+                        "item-2": "early.js",  // Script for Tab 2 (existing graph)
+                        "item-3": "earlypol.js", // Replace with the actual script for Tab 3
+                       // "item-4": "graph4.js", // Replace with the actual script for Tab 4
+                        //"item-5": "graph5.js"  // Replace with the actual script for Tab 5
+                    };
 
+                    var ContainerMapping = {
+                        "item-2": "G-1",  // Script for Tab 2 (existing graph)
+                        "item-3": "G-2", // Replace with the actual script for Tab 3
+                       // "item-4": ".G-3", // Replace with the actual script for Tab 4
+                        //"item-5": ".G-4"  // Replace with the actual script for Tab 5
+                    };
+            
+                    $menu_tabs.on("click", function(e) {
+                        e.preventDefault();
+            
+                        // Store the target article ID (hash) before fade out begins
+                        var targetArticleID = this.hash;
+            
+                        // Remove 'active' class from all tabs
+                        $menu_tabs.removeClass('active');
+                        $(this).addClass('active'); // Add active class to clicked tab
+            
+                        var active_tab = this.href.toString().substring(this.href.toString().indexOf("#") + 1);
+                        document.getElementById("tabpressed").value = active_tab;
+            
+                        // Clear all graphs from all tabs before rendering the new one
+                        clearAllGraphs();
+            
+                       
+            
+                        // Fade out current visible articles
+                        $('.menu__item.item-active').fadeOut(300, function() {
+                            // After fadeOut completes, remove 'item-active' from the old article
+                            $(this).removeClass('item-active');
+            
+                            // Ensure the new article is hidden first, then fade in
+                            $(targetArticleID).hide().addClass('item-active').fadeIn(300);  // Fade in new article after class is added
+                        });
+
+                         // Check if the tab has a corresponding graph script
+                         if (graphMapping[active_tab]) {
+                            loadGraph(graphMapping[active_tab], ContainerMapping[active_tab]); // Load the corresponding graph into the correct container
+                        }
+
+                    });
+            
+                    // Function to clear all graphs from all containers
+                function clearAllGraphs() {
+                        console.log("Clearing all graphs...");
+            
+                        $('.network').remove();
+                        // Clear any existing graph content inside all graph containers
+                        //d3.selectAll(".graph-container").selectAll("*").remove();
+
+                     }
+            
+                    // General function to load the corresponding graph script into the specific container
+                    function loadGraph(graphScript, containerID) {
+                        console.log("Loading graph from script: " + graphScript);
+            
+                        // Ensure the graph is loaded into the correct tab's container
+                        
+                        var script_string = '<div class="network"></div><script src="' + graphScript + '"></' + 'script>'
+
+                        $(script_string).appendTo(document.getElementById(containerID))
+        
+                    }
+                });
+            </script>
+            
+            
+            
+            
     </body>
+    
+    
 </html>

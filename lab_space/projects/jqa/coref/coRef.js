@@ -1,5 +1,12 @@
 
 // Utilities.
+
+
+function sleep(ms = 0) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+
 function formatNumbers(d) {
     /*
     Function that rounds number to 2 significant digits, with no grouping for thousnads. 
@@ -9,8 +16,6 @@ function formatNumbers(d) {
     */
     return d3.format('.2r')(d);
 }
-
-let FilterParams = {}
 
 function UpdateFilters(dataset,node,link,label){
     /* 
@@ -74,7 +79,6 @@ function UpdateFilters(dataset,node,link,label){
     });     
 }
 
-let adjlist = [] // Adjacency list for highlighting connected nodes.
 
 function neigh(a, b) {
     /* 
@@ -90,13 +94,11 @@ function neigh(a, b) {
     return a == b || adjlist.includes(a + '-' + b) || adjlist.includes(b + '-' + a);
 }
 
-
 /* 
 Build drag event handlers
 
 These allow the nodes to not be affected by the "gravity" of the sim while being dragged
 */
-
 function dragStarted(d, event) {
     /*
     At start of drag, the x and y coordinate are fixed (fx, fy) to their starting point
@@ -140,16 +142,20 @@ function dragEnded(d, event) {
 }
 
 
-// JSON data path
-var JSON_filepath = 'data/JQA_coRef-network.json';
 
+function graph(filepath){
+
+     FilterParams = {} // Filter params dict
+     adjlist = [] // Adjacency list for highlighting connected nodes.
 
 // "data" now holds the JSON data for building the grapgh
-d3.json(JSON_filepath).then(data => {
-     
+d3.json(filepath).then(data => {
+
+    d3.selectAll("svg > *").remove();
+
     // Build constants. (window size and length of transitions)
     let margin = {top: 30, right: 30, bottom: 30, left: 30},
-        width = 850, height = 700, duration = 300;
+        width = 850, height = 600, duration = 300;
 
     // Build container.
     const svg = d3.select('.network')
@@ -357,24 +363,26 @@ d3.json(JSON_filepath).then(data => {
         // The default for the filtering params are set as the max.min value in the data
         FilterParams.EigMin = document.getElementById('eig-minrange').value;
         FilterParams.EigMax = document.getElementById('eig-maxrange').value;
-        
+        ///////
+
+
     // Draw initial graph.
-    chart(data);
+    // chart(data);
 
     // Draw network function.
-    function chart(dataset) {
+    //function chart(dataset) {
         /*
         Draws the network graph 
         */
 
         // Creates an array, each entry being info on a single node/link
-        let nodes = dataset.nodes.map(d => Object.create(d));
+        let nodes = data.nodes.map(d => Object.create(d));
 
         // This value will change when filtered, but it is set to default at all nodes 
         NewNodes = nodes.map(function(nodes) { return nodes.id; });
         
         // ALl links are drawn for now, then the opacity of irrelevant ones is changed later
-        let links = dataset.links.map(d => Object.create(d));
+        let links = data.links.map(d => Object.create(d));
              
         // Draw links.
         link = d3.select('.links') // Selects all links 
@@ -449,7 +457,7 @@ d3.json(JSON_filepath).then(data => {
         // Reheat simulation. (Gravity) 
         window.simulation.alphaDecay(0.01).restart();
 
-     };
+     //};
 
     // Move mouse over/out.
     node.on('mouseover', function(event, d, i) { // Each node listens for mouseover 
@@ -471,7 +479,7 @@ d3.json(JSON_filepath).then(data => {
             .text( d => d.id)
             .attr('visibility', function(o) {
                 // If a node is neighbor with source, show text -- if not, don't.
-                return neigh(source, o.__proto__.id) ? "visible" : "hidden";
+                return neigh(source, o.__proto__.id) && NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
             });
 
         
@@ -509,7 +517,7 @@ d3.json(JSON_filepath).then(data => {
         tooltip
             .style("left", (pos.x) + "px")
             .style("top", (pos.y) + "px")
-    })
+    });
 
     node.on('mouseout', function () { // hides tooltip when not highlighting node
         tooltip.transition(duration).style('opacity', 0);
@@ -532,7 +540,7 @@ d3.json(JSON_filepath).then(data => {
         // Resets the link to their original (possibly filtered) opacity 
         link.style('opacity', 1);
     
-    })
+    });
     
     // Slider Listening Events
 
@@ -578,51 +586,47 @@ d3.json(JSON_filepath).then(data => {
     
     });
 
-        // Listens for BETWEENNESS maxrange slider value change
-        d3.select("#bet-minrange").on("change", function(){
-    
-            // When it is changed, the filterparams value is changed accordingly 
-            FilterParams.BetMin = document.getElementById('bet-minrange').value;
-            // UpdateFilters function is then ran with updated value
-            UpdateFilters(data,node,link,label);
-                    
-        
-        });
-    
-          // Listens for BETWEENNESS maxrange slider value change
-          d3.select("#bet-maxrange").on("change", function(){
-        
-            // When it is changed, the filterparams value is changed accordingly 
-            FilterParams.BetMax = document.getElementById('bet-maxrange').value;
-            // UpdateFilters function is then ran with updated value
-            UpdateFilters(data,node,link,label);
-                    
-        
-        });
-
-            // Listens for EIGENVECTOR maxrange slider value change
-    d3.select("#eig-minrange").on("change", function(){
+    // Listens for BETWEENNESS maxrange slider value change
+    d3.select("#bet-minrange").on("change", function(){
     
         // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.EigMin = document.getElementById('eig-minrange').value;
+        FilterParams.BetMin = document.getElementById('bet-minrange').value;
         // UpdateFilters function is then ran with updated value
         UpdateFilters(data,node,link,label);
-                
+                    
+     });
     
+    // Listens for BETWEENNESS maxrange slider value change
+    d3.select("#bet-maxrange").on("change", function(){
+        
+        // When it is changed, the filterparams value is changed accordingly 
+        FilterParams.BetMax = document.getElementById('bet-maxrange').value;
+        // UpdateFilters function is then ran with updated value
+        UpdateFilters(data,node,link,label);
+                      
     });
 
-      // Listens for EIGENVECTOR maxrange slider value change
+    // Listens for EIGENVECTOR maxrange slider value change
+    d3.select("#eig-minrange").on("change", function(){
+    
+    // When it is changed, the filterparams value is changed accordingly 
+    FilterParams.EigMin = document.getElementById('eig-minrange').value;
+    // UpdateFilters function is then ran with updated value
+    UpdateFilters(data,node,link,label);
+                
+    });
+
+    // Listens for EIGENVECTOR maxrange slider value change
       d3.select("#eig-maxrange").on("change", function(){
     
         // When it is changed, the filterparams value is changed accordingly 
         FilterParams.EigMax = document.getElementById('eig-maxrange').value;
         // UpdateFilters function is then ran with updated value
         UpdateFilters(data,node,link,label);
-                
-    
+        
     });
 
-    
-
 });
+
+}
 
