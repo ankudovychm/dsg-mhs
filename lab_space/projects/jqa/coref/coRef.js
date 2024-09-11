@@ -496,9 +496,11 @@ d3.json(filepath).then(data => {
         tooltip
             .transition(duration) // Sets attributes like transition duration and location. 
                 .attr('pointer-events', 'none')
-                .style('opacity', 0.97)
-                .style("left", (pos.x) + "px")
-                .style("top", (pos.y) + "px");
+                .style('opacity', 0.7) // lowered opacatiy so nodes/links behind can be seen 
+                
+                // Changed to tie it to mouse movement because this stops it from getting wonky when zoom/page view is changed. 
+                .style("left", (event.x) + "px")
+                .style("top", (event.y) + "px");
             
         toolHeader
             .html(d.id)
@@ -516,8 +518,8 @@ d3.json(filepath).then(data => {
 
     node.on('mousemove', function(event) {
         tooltip
-            .style("left", (pos.x) + "px")
-            .style("top", (pos.y) + "px")
+            .style("left", (event.x) + "px")
+            .style("top", (event.y) + "px")
     });
 
     node.on('mouseout', function () { // hides tooltip when not highlighting node
