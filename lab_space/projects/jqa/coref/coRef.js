@@ -27,30 +27,30 @@ function UpdateFilters(dataset,node,link,label){
     */
 
     console.log(
-            "Degree Min:" + FilterParams.DegreeMin + 
-        '\n' +"Degree Max:" +FilterParams.DegreeMax+
+            "Degree Min:" + FilterParams.degMin + 
+        '\n' +"Degree Max:" +FilterParams.degMax+
         '\n' +
-        '\n'+ "Modularity Min:" + FilterParams.ModuMin + 
-        '\n' +"Modularity Max:" +FilterParams.ModuMax +
+        '\n'+ "Modularity Min:" + FilterParams.modMin + 
+        '\n' +"Modularity Max:" +FilterParams.modMax +
         '\n' +
-        '\n' +"Betweenness Min:" +FilterParams.BetMin +
-        '\n' +"Betweenness Max:" +FilterParams.BetMax + 
+        '\n' +"Betweenness Min:" +FilterParams.betMin +
+        '\n' +"Betweenness Max:" +FilterParams.betMax + 
         '\n' +
-        '\n' +"Eigenvector Min:" +FilterParams.EigMin + 
-        '\n' +"Eigenvector Max:" +FilterParams.EigMax  
+        '\n' +"Eigenvector Min:" +FilterParams.eigMin + 
+        '\n' +"Eigenvector Max:" +FilterParams.eigMax  
     );
 
 
     // Right now, it does this filtering for every single attribute (min and max) every time any (possible unrelated) is udated. Is there a better way? 
     let FilteredNodes = dataset.nodes.map(d => Object.create(d))
-    .filter(function (d) { return d.degree >= FilterParams.DegreeMin })
-    .filter(function (d) { return d.degree <= FilterParams.DegreeMax })
-    .filter(function (d) { return d.modularity >= FilterParams.ModuMin })
-    .filter(function (d) { return d.modularity <= FilterParams.ModuMax })
-    .filter(function (d) { return d.betweenness >= FilterParams.BetMin })
-    .filter(function (d) { return d.betweenness <= FilterParams.BetMax })
-    .filter(function (d) { return d.eigenvector >= FilterParams.EigMin })
-    .filter(function (d) { return d.eigenvector <= FilterParams.EigMax });
+    .filter(function (d) { return d.degree >= FilterParams.degMin })
+    .filter(function (d) { return d.degree <= FilterParams.degMax })
+    .filter(function (d) { return d.modularity >= FilterParams.modMin })
+    .filter(function (d) { return d.modularity <= FilterParams.modMax })
+    .filter(function (d) { return d.betweenness >= FilterParams.betMin })
+    .filter(function (d) { return d.betweenness <= FilterParams.betMax })
+    .filter(function (d) { return d.eigenvector >= FilterParams.eigMin })
+    .filter(function (d) { return d.eigenvector <= FilterParams.eigMax });
 
     // Gets only the Ids of the filtered Nodes 
     NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
@@ -272,103 +272,11 @@ d3.json(filepath).then(data => {
         
     );
 
-    // Below, all the sliders are built for filtering 
+        // Sets all the slider values 
+        SetSliders(data);
 
-        // Degree slider 
 
-        minimum_deg  = d3.extent(data.nodes.map(node => node.degree))[0];
-        maximum_deg = d3.extent(data.nodes.map(node => node.degree))[1];
-
-        document.getElementById('deg-minnum').value = minimum_deg;
-        document.getElementById('deg-maxnum').value = maximum_deg;
-        document.getElementById('deg-minrange').min = minimum_deg;
-
-        document.getElementById('deg-minrange').max = maximum_deg;
-
-        document.getElementById('deg-maxrange').min = minimum_deg;
-        document.getElementById('deg-maxrange').max = maximum_deg;
-
-        document.getElementById('deg-minrange').value = minimum_deg;
-        document.getElementById('deg-maxrange').value = maximum_deg;
-            
     
-        // The default for the filtering params are set as the max.min value in the data
-        FilterParams.DegreeMin = document.getElementById('deg-minrange').value;
-        FilterParams.DegreeMax = document.getElementById('deg-maxrange').value;
-
-         // Mod slider 
-
-        minimum_mod  = d3.extent(data.nodes.map(node => node.modularity))[0];
-        maximum_mod = d3.extent(data.nodes.map(node => node.modularity))[1];
-
-        document.getElementById('mod-minnum').value = minimum_mod;
-        document.getElementById('mod-maxnum').value = maximum_mod;
-
-        document.getElementById('mod-minrange').min = minimum_mod;
-        document.getElementById('mod-minrange').max = maximum_mod;
-
-        document.getElementById('mod-maxrange').min = minimum_mod;
-        document.getElementById('mod-maxrange').max = maximum_mod;
-
-        document.getElementById('mod-minrange').value = minimum_mod;
-        document.getElementById('mod-maxrange').value = maximum_mod;
-            
-    
-        // The default for the filtering params are set as the max.min value in the data
-        FilterParams.ModuMin = document.getElementById('mod-minrange').value;
-        FilterParams.ModuMax = document.getElementById('mod-maxrange').value;
-
-
-    // This is a (possibly unneasarily complicated) way to round to the ceiling of the second decimal place. Floor is needed as there may be a minimum of a very small non-zero number
-    // This is to avoid having 3 deceimal places in the filter condition but also making sure it is close to the actual max value. 
-    maximum_bet = parseFloat((d3.extent(data.nodes.map(node => node.betweenness))[1]+.01).toString().substring(0, (d3.extent(data.nodes.map(node => node.betweenness))[1]+.01).toString().indexOf('.')+3));
-    minimum_bet = d3.extent(data.nodes.map(node => node.betweenness))[0];
-
-        // Bet slider 
-        document.getElementById('bet-minnum').value = minimum_bet;
-        document.getElementById('bet-maxnum').value = maximum_bet;
-
-        document.getElementById('bet-minrange').min = minimum_bet;
-        document.getElementById('bet-minrange').max = maximum_bet;
-
-        document.getElementById('bet-maxrange').min = minimum_bet
-        document.getElementById('bet-maxrange').max = maximum_bet;
-
-        document.getElementById('bet-minrange').value = minimum_bet;
-        document.getElementById('bet-maxrange').value = maximum_bet;
-        
-    
-        // The default for the filtering params are set as the max.min value in the data
-        FilterParams.BetMin = document.getElementById('bet-minrange').value;
-        FilterParams.BetMax = document.getElementById('bet-maxrange').value;
-
-         // Eig slider 
-
-        // This is a (possibly unneasarily complicated) way to round to the ceiling of the second decimal place. Floor is needed as there may be a minimum of a very small non-zero number
-        // This is to avoid having 3 deceimal places in the filter condition but also making sure it is close to the actual max value. 
-        maximum_eig = parseFloat((d3.extent(data.nodes.map(node => node.eigenvector))[1]+.01).toString().substring(0, (d3.extent(data.nodes.map(node => node.eigenvector))[1]+.01).toString().indexOf('.')+3));
-        minimum_eig = Math.floor(d3.extent(data.nodes.map(node => node.eigenvector))[0]);
-       
-        document.getElementById('eig-minnum').value = minimum_eig;
-        document.getElementById('eig-maxnum').value = maximum_eig;
-
-        document.getElementById('eig-minrange').min = minimum_eig;
-        document.getElementById('eig-minrange').max = maximum_eig;
-
-        document.getElementById('eig-maxrange').min = minimum_eig;
-        document.getElementById('eig-maxrange').max = maximum_eig;
-
-        document.getElementById('eig-minrange').value = minimum_eig;
-        document.getElementById('eig-maxrange').value = maximum_eig;
-            
-        // The default for the filtering params are set as the max.min value in the data
-        FilterParams.EigMin = document.getElementById('eig-minrange').value;
-        FilterParams.EigMax = document.getElementById('eig-maxrange').value;
-        ///////
-
-
-    // Draw initial graph.
-    // chart(data);
 
     // Draw network function.
     //function chart(dataset) {
@@ -547,87 +455,7 @@ d3.json(filepath).then(data => {
     
     // Slider Listening Events
 
-    // Listens for DEGREE minrange slider value change
-    d3.select("#deg-minrange").on("change", function(){
-
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.DegreeMin = document.getElementById('deg-minrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                
-    });
-    
-    // Listens for DEGREE maxrange slider value change
-    d3.select("#deg-maxrange").on("change", function(){
-    
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.DegreeMax = document.getElementById('deg-maxrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                
-    
-    });
-
-      // Listens for MODULARITY minrange slider value change
-    d3.select("#mod-minrange").on("change", function(){
-
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.ModuMin = document.getElementById('mod-minrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                
-    });
-    
-    // Listens for MODULARITY maxrange slider value change
-    d3.select("#mod-maxrange").on("change", function(){
-    
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.ModuMax = document.getElementById('mod-maxrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                
-    
-    });
-
-    // Listens for BETWEENNESS maxrange slider value change
-    d3.select("#bet-minrange").on("change", function(){
-    
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.BetMin = document.getElementById('bet-minrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                    
-     });
-    
-    // Listens for BETWEENNESS maxrange slider value change
-    d3.select("#bet-maxrange").on("change", function(){
-        
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.BetMax = document.getElementById('bet-maxrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-                      
-    });
-
-    // Listens for EIGENVECTOR maxrange slider value change
-    d3.select("#eig-minrange").on("change", function(){
-    
-    // When it is changed, the filterparams value is changed accordingly 
-    FilterParams.EigMin = document.getElementById('eig-minrange').value;
-    // UpdateFilters function is then ran with updated value
-    UpdateFilters(data,node,link,label);
-                
-    });
-
-    // Listens for EIGENVECTOR maxrange slider value change
-      d3.select("#eig-maxrange").on("change", function(){
-    
-        // When it is changed, the filterparams value is changed accordingly 
-        FilterParams.EigMax = document.getElementById('eig-maxrange').value;
-        // UpdateFilters function is then ran with updated value
-        UpdateFilters(data,node,link,label);
-        
-    });
+    setupSliderListeners(data, node, link, label);
 
 });
 

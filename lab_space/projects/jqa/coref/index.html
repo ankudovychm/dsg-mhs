@@ -5,10 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="../../../styles/main-dark.css?v1"></link>
         <link rel="stylesheet" href="../../../styles/d3-dark.css?v1"></link>
-        <link rel="stylesheet" href="slider_styles.css?v2"></link>
+        <link rel="stylesheet" href="slider_styles.css?v1"></link>
         <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link rel = "stylesheet" href ="tabs-style.css?v2">
-
+        <script src="CreateSliders.js?v1"></script>
         <script type="text/javascript" src="coRef.js?v2"></script> <!-- Holds the code for the network viz-->
         
         <script src="https://d3js.org/d3.v7.min.js"></script>   
@@ -136,100 +136,21 @@
                     <br>
                 <h2 style="color: #7a7369;" class="title">Filters</h2>
                 </div>
-                <div  class="Filter-Container">
+                <div  class="Filter-Container" id="Filter-Container">
 
-                <div class="child">
-                <!--Deg filter start-->
-                <h3 style="color: #7a7369;" class="deg-filter">Degree Filter</h3>
-                <div class="deg-slider">
-                    <div class="deg-min-value deg-numberVal">
-                        <input type="number" min="0" max = "100" value = "25" id="deg-minnum" disabled>
-                    </div>
-                    &nbsp; - 
-                    <div class="deg-range-slider">
-                        <div class="progress"></div>
-                        <input type="range"class="deg-range-min" min="0" max = "100" value = "25" id="deg-minrange">
-                        <input type="range"class="deg-range-max" min="0" max = "100" value = "75" id="deg-maxrange">
-                    </div>
-                    - &nbsp;
-                    <div class="deg-max-value deg-numberVal">
-                        <input type="number" min = "0" max = "100" value = "75" id="deg-maxnum" disabled>
-                    </div>
-                </div>
-                <!--Deg filter end-->
-                </div>
+                     <!-- Link to your JavaScript file -->
+                    <script>
+                        // Example of how to create sliders
+                        
+                        CreateSlider('degree', 1, 'Filter-Container',1);
+                        CreateSlider('modularity', 1, 'Filter-Container',1);
+                        CreateSlider('betweenness', .01, 'Filter-Container',.05);
+                        CreateSlider('eigenvector', .01, 'Filter-Container',.05);
 
-                <div class="child">
-                <!--Mod filter start-->
-                <h3 style="color: #7a7369;" class="mod-filter">Community Filter</h3>
-                <div class="mod-slider">
-                    <div class="mod-min-value mod-numberVal">
-                        <input type="number" min="0" max = "100" value = "25" id="mod-minnum" disabled>
-                    </div>
-                    &nbsp; - 
-                    <div class="mod-range-slider">
-                        <div class="mod-progress"></div>
-                        <input type="range"class="mod-range-min" min="0" max = "100" value = "25" id="mod-minrange">
-                        <input type="range"class="mod-range-max" min="0" max = "100" value = "75" id="mod-maxrange">
-                    </div>
-                    - &nbsp;
-                    <div class="mod-max-value mod-numberVal">
-                        <input type="number" min = "0" max = "100" value = "75" id="mod-maxnum" disabled>
-                    </div>
-                </div>
-                <!--Mod filter end-->
-                </div>
-
-                 
-
-                <!--Bet filter start-->
-                <div class="child">
-                <h3 style="color: #7a7369;" class="bet-filter">Betweenness Filter</h3>
-                <div class="bet-slider">
-                    <div class="bet-min-value bet-numberVal">
-                        <input type="number" min="0" max = "100" value = "25" id="bet-minnum" disabled>
-                    </div>
-                    &nbsp; - 
-                    <div class="bet-range-slider">
-                        <div class="bet-progress"></div>
-                        <input type="range"class="bet-range-min" min="0" max = "100" value = "25" step =".01" id="bet-minrange">
-                        <input type="range"class="bet-range-max" min="0" max = "100" value = "75" step =".01" id="bet-maxrange">
-                    </div>
-                    - &nbsp;
-                    <div class="bet-max-value bet-numberVal">
-                        <input type="number" min = "0" max = "100" value = "75" id="bet-maxnum" disabled>
-                    </div>
-                </div>
-
-                <!--Bet filter end-->
-                </div>
-
-                <!--eig filter start-->
-                <div class="child">
-                <h3 style="color: #7a7369;" class="eig-filter">Eigenvector Filter</h3>
-                <div class="eig-slider">
-                    <div class="eig-min-value eig-numberVal">
-                        <input type="number" min="0" max = "100" value = "25" id="eig-minnum" disabled>
-                    </div>
-                    &nbsp; - 
-                    <div class="eig-range-slider">
-                        <div class="eig-progress"></div>
-                        <input type="range"class="eig-range-min" min="0" max = "100" value = "25" step =".01" id="eig-minrange">
-                        <input type="range"class="eig-range-max" min="0" max = "100" value = "75" step =".01" id="eig-maxrange">
-                    </div>
-                    - &nbsp;
-                    <div class="eig-max-value eig-numberVal">
-                        <input type="number" min = "0" max = "100" value = "75" id="eig-maxnum" disabled>
-                    </div>
-                </div>
-
-                <!--eig filter end-->
-                </div>
-
+                    </script>
                 </div> <!-- ends filters -->
-
             </div>
-                <script src="slider_script.js?v1"></script>
+                
             </div>
             <script src='http://code.jquery.com/jquery.min.js'></script>
             <script type="text/javascript">
@@ -238,11 +159,11 @@
             
                     // Create a mapping for each tab and the corresponding graph script to load
                     var graphMapping = {
-                        "item-2": "early.js",  
-                        "item-3": "earlypol.js", 
-                        "item-4": "secstate.js", 
-                        "item-5": "pres.js", 
-                        "item-6": "late.js"
+                        "item-2": "early.json",  
+                        "item-3": "earlypol.json", 
+                        "item-4": "secstate.json", 
+                        "item-5": "pres.json", 
+                        "item-6": "late.json"
                     };
 
                     // holds the contianer ID for each of the tabs for where the chart should go 
@@ -258,18 +179,8 @@
                         e.preventDefault();
 
                         // Sets the slider progress bars back to their default lenghts 
-                        $('.deg-slider .deg-range-slider .progress').css({
+                        $('.slider .range-slider .progress').css({
                             'left': '0%', 'right': '0%'});
-
-                        $('.mod-slider .mod-range-slider .mod-progress').css({
-                            'left': '0%', 'right': '0%'});
-
-                        $('.bet-slider .bet-range-slider .bet-progress').css({
-                            'left': '0%', 'right': '0%'});
-
-                        $('.eig-slider .eig-range-slider .eig-progress').css({
-                            'left': '0%', 'right': '0%'});
-                    
 
                         // Store the target article ID (hash) before fade out begins
                         var targetArticleID = this.hash;
@@ -327,14 +238,15 @@
             
                     // General function to load the corresponding graph script into the specific container
                     function loadGraph(graphScript, containerID) {
-                        console.log("Loading graph from script: " + graphScript);
-            
-                        // Ensure the graph is loaded into the correct tab's container
-                        
-                        var script_string = '<div class="network"></div><script src="ChartJS/' + graphScript + '"></' + 'script>'
+                    
+                        // Create the div element as a string
+                        var div_string = '<div class="network"></div>';
 
-                        $(script_string).appendTo(document.getElementById(containerID))
-        
+                        // Insert the div into the container with the provided containerID
+                        $(div_string).appendTo(document.getElementById(containerID));
+
+                        // Manually call the graph function after the div is inserted
+                        graph("data/"+graphScript);
                     }
                 });
             </script>

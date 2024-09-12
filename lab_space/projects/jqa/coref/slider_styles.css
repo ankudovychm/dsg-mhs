@@ -14,8 +14,6 @@
 } 
 .child { 
     margin: 5px; 
-   
-
 }
 
 .Chart-Holder {
@@ -27,13 +25,9 @@
     justify-content: center;
     align-items: center;
     text-align: justify;
-    
 }
 
-
-
-/* Deggree Slider Start */
-.deg-slider{
+.slider{
     position: relative;
     display: flex;
     justify-content: center;
@@ -46,7 +40,7 @@
 
 }
 
-.deg-slider input[type="number"]{
+.slider input[type="number"]{
     width: 50px;
     height: 30px;
     background: #ddd;
@@ -57,12 +51,12 @@
     border-radius: 5px;
 }
 
-.deg-slider input [type = "number"]::-webkit-outer-spin-button,
-.deg-slider input [type = "number"]::-webkit-inner-spin-button{
+.slider input [type = "number"]::-webkit-outer-spin-button,
+.slider input [type = "number"]::-webkit-inner-spin-button{
     -webkit-appearance: none;
 }
 
-.deg-slider .deg-range-slider {
+.slider .range-slider {
     position: relative;
     width: 300px;
     height: 5px;
@@ -72,7 +66,7 @@
     margin:10px
 }
 
-.deg-slider .deg-range-slider .progress{
+.slider .range-slider .progress{
     left: 0%;
     right: 0%;
     height: 100%;
@@ -81,7 +75,7 @@
     position: absolute;
 }
 
-.deg-slider .deg-range-slider input[type="range"]{
+.slider .range-slider input[type="range"]{
     position: absolute;
     top: -8px;
     left: -5px;
@@ -93,7 +87,7 @@
     outline: none;
 }
 
-.deg-slider .deg-range-slider input::-webkit-slider-thumb{
+.slider .range-slider input::-webkit-slider-thumb{
     pointer-events: auto;
     -webkit-appearance: none;
     width: 17px;
@@ -103,217 +97,3 @@
 
 
 }
-/* Deggre Slider End */
-
-/* mod Slider Start */
-.mod-slider{
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;   
-    width: 500px;  
-    height: 80px;
-    background: #363430; 
-    border-radius: 20px;  
-}
-
-.mod-slider input[type="number"]{
-    width: 50px;
-    height: 30px;
-    background: #ddd;
-    border: 1px solid #fff; 
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    border-radius: 5px;
-}
-
-.mod-slider input [type = "number"]::-webkit-outer-spin-button,
-.mod-slider input [type = "number"]::-webkit-inner-spin-button{
-    -webkit-appearance: none;
-}
-
-.mod-slider .mod-range-slider {
-    position: relative;
-    width: 300px;
-    height: 5px;
-    background: #363430;
-    outline: none;
-    top: 1px;
-    margin:10px
-}
-
-.mod-slider .mod-range-slider .mod-progress{
-    left: 0%;
-    right: 0%;
-    height: 100%;
-    background: #7a7369;
-    border-radius: 50px;
-    position: absolute;
-}
-
-.mod-slider .mod-range-slider input[type="range"]{
-    position: absolute;
-    top: -8px;
-    left: -5px;
-    width: 101%;
-    appearance: none;
-    -webkit-appearance: none;
-    pointer-events: none;
-    background: none;
-    outline: none;
-}
-
-.mod-slider .mod-range-slider input::-webkit-slider-thumb{
-    pointer-events: auto;
-    -webkit-appearance: none;
-    width: 17px;
-    height: 17px;
-    background: #7a7369;
-    border-radius: 50px;
-
-
-}
-/* Mod Slider End */
-
-/* bet Slider Start */
-.bet-slider{
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;   
-    width: 500px;  
-    height: 80px;
-    background: #363430; 
-    border-radius: 20px;  
-}
-
-.bet-slider input[type="number"]{
-    width: 50px;
-    height: 30px;
-    background: #ddd;
-    border: 1px solid #fff; 
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    border-radius: 5px;
-}
-
-.bet-slider input [type = "number"]::-webkit-outer-spin-button,
-.bet-slider input [type = "number"]::-webkit-inner-spin-button{
-    -webkit-appearance: none;
-}
-
-.bet-slider .bet-range-slider {
-    position: relative;
-    width: 300px;
-    height: 5px;
-    background: #363430;
-    outline: none;
-    top: 1px;
-    margin:10px
-}
-
-.bet-slider .bet-range-slider .bet-progress{
-    left: 0%;
-    right: 0%;
-    height: 100%;
-    background: #7a7369;
-    border-radius: 50px;
-    position: absolute;
-}
-
-.bet-slider .bet-range-slider input[type="range"]{
-    position: absolute;
-    top: -8px;
-    left: -5px;
-    width: 101%;
-    appearance: none;
-    -webkit-appearance: none;
-    pointer-events: none;
-    background: none;
-    outline: none;
-}
-
-.bet-slider .bet-range-slider input::-webkit-slider-thumb{
-    pointer-events: auto;
-    -webkit-appearance: none;
-    width: 17px;
-    height: 17px;
-    background: #7a7369;
-    border-radius: 50px;
-
-
-}
-/* bet Slider End */
-
-/* eig Slider Start */
-.eig-slider{ /* box around */
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;   
-    width: 500px;  
-    height: 80px;
-    background: #363430; 
-    border-radius: 20px;  
-}
-
-.eig-slider input[type="number"]{ /* number value box */
-    width: 50px;
-    height: 30px;
-    background: #ddd;
-    border: 1px solid #fff; 
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    border-radius: 5px;
-}
-
-.eig-slider input [type = "number"]::-webkit-outer-spin-button,
-.eig-slider input [type = "number"]::-webkit-inner-spin-button{
-    -webkit-appearance: none;
-}
-
-.eig-slider .eig-range-slider { /* unfilled progress bar*/
-    position: relative;
-    width: 300px;
-    height: 5px;
-    background: #363430;
-    outline: none;
-    top: 1px;
-    margin:10px
-}
-
-.eig-slider .eig-range-slider .eig-progress{ /* progress bar */
-    left: 0%;
-    right: 0%;
-    height: 100%;
-    background: #7a7369;
-    border-radius: 50px;
-    position: absolute;
-}
-
-.eig-slider .eig-range-slider input[type="range"]{ /* area around bar */
-    position: absolute;
-    top: -8px;
-    left: -5px;
-    width: 101%;
-    appearance: none;
-    -webkit-appearance: none;
-    pointer-events: none;
-    background: none;
-    outline: none;
-}
-
-.eig-slider .eig-range-slider input::-webkit-slider-thumb{ /*handles */
-    pointer-events: auto;
-    -webkit-appearance: none;
-    width: 17px;
-    height: 17px;
-    background: #7a7369; 
-    border-radius: 50px;
-
-
-}
-/* eig Slider End */
