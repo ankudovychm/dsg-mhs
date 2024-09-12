@@ -3,15 +3,17 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="../../../styles/main-dark.css?v1"></link>
-        <link rel="stylesheet" href="../../../styles/d3-dark.css?v1"></link>
-        <link rel="stylesheet" href="slider_styles.css?v1"></link>
+        <link rel="stylesheet" href="../../../styles/main-dark.css"></link>
+        <link rel="stylesheet" href="../../../styles/d3-dark.css"></link>
+        <link rel="stylesheet" href="../../../styles/slider_styles.css"></link>
         <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        <link rel = "stylesheet" href ="tabs-style.css?v2">
-        <script src="CreateSliders.js?v1"></script>
+        <link rel = "stylesheet" href ="../../../styles/tabs-style.css">
+        
+        <script src="CreateSliders.js?v1"></script> <!-- Holds the code for the modular sliders-->
         <script type="text/javascript" src="coRef.js?v2"></script> <!-- Holds the code for the network viz-->
         
-        <script src="https://d3js.org/d3.v7.min.js"></script>   
+        <script src="https://d3js.org/d3.v7.min.js"></script>  
+
         <!-- Dark Mode Colors
             Xiketic: 110b11
             Raisin Black: 242124
@@ -32,11 +34,13 @@
         </header>
         
         <div class="main-body">
-
+        
+            <!-- This is a tab based navigation system. You can add new tabs following this method-->
             <div class = "tab-menu">
                 <h1>Co-reference Network Map</h1>
                 <ul class = "menu__tabs">
-
+                    
+                    <!--Marked active here because it is the default-->
                     <li><a class="active" href="#item-1"><i class = "fa fa-about"></i> About</a></li>
                 
                     <li><a  href="#item-2"><i class = "fa fa-early"></i> Early years</a></li>
@@ -49,7 +53,11 @@
 
                     <li><a  href="#item-6"><i class = "fa fa-late"></i> Later Years</a></li>
 
+                    <!--ie you could make an item-7 here-->
+
                 </ul>
+
+                <!--ABove held the tabs, below here holds their contents. THe graphs will be drawn here -->
                 <section class = "menu--wrapper">
 
                     <article id = "item-1" class = "menu__item item-active">
@@ -62,9 +70,9 @@
                     <article id = "item-2" class = "menu__item">
                         <br>
                         <h3 style="text-align: center;">Early Years (1779 - 1793)</h3><br>
-                        <p style=" padding-left: 20px;">
-                            Here, discuss JQA in this time period<br><br>
-                            
+                        <p style=" padding-left: 20px;"> Here, discuss JQA in this time period<br><br>
+
+                                <!--The graph will go inside of this div. This is replicated for all tabs that have possbilities for a graph-->
                                 <div id="G-2" class="Chart-Holder">
                             
                                 </div>
@@ -129,26 +137,23 @@
                 <!--  Filters! -->
                 <br>
                 
-                <!-- Hides the filters by default (because the first tab is the about tab)-->
+                <!-- Hides the filters by default (because the first tab is the about tab and there is nothing to filter)-->
                 <div style="visibility: hidden;" id="FiltersandTitle">
                 
                 <div class="Filter-Title">
                     <br>
                 <h2 style="color: #7a7369;" class="title">Filters</h2>
                 </div>
-                <div  class="Filter-Container" id="Filter-Container">
 
-                     <!-- Link to your JavaScript file -->
+                <div  class="Filter-Container" id="Filter-Container">
+                    <!--There is a modular filter builder, this uses the CreateSliders.js file to build filters-->
                     <script>
-                        // Example of how to create sliders
-                        
                         CreateSlider('degree', 1, 'Filter-Container',1);
                         CreateSlider('modularity', 1, 'Filter-Container',1);
                         CreateSlider('betweenness', .01, 'Filter-Container',.05);
                         CreateSlider('eigenvector', .01, 'Filter-Container',.05);
-
                     </script>
-                </div> <!-- ends filters -->
+                </div> 
             </div>
                 
             </div>
@@ -157,7 +162,7 @@
                 $(function() {
                     var $menu_tabs = $('.menu__tabs li a');
             
-                    // Create a mapping for each tab and the corresponding graph script to load
+                    // This maps a tab to its data file 
                     var graphMapping = {
                         "item-2": "early.json",  
                         "item-3": "earlypol.json", 
@@ -166,7 +171,7 @@
                         "item-6": "late.json"
                     };
 
-                    // holds the contianer ID for each of the tabs for where the chart should go 
+                    // this maps a tab to its container. (maybe both of the above should be a list of dics?)
                     var ContainerMapping = {
                         "item-2": "G-2",  
                         "item-3": "G-3", 
@@ -174,7 +179,8 @@
                         "item-5": "G-5",  
                         "item-6": "G-6"
                     };
-            
+                    
+                    // when a tab is clicked..
                     $menu_tabs.on("click", function(e) {
                         e.preventDefault();
 
@@ -182,31 +188,28 @@
                         $('.slider .range-slider .progress').css({
                             'left': '0%', 'right': '0%'});
 
-                        // Store the target article ID (hash) before fade out begins
+                        // The ID of the tab that has been clicked on 
                         var targetArticleID = this.hash;
             
                         // Remove 'active' class from all tabs
                         $menu_tabs.removeClass('active');
                         $(this).addClass('active'); // Add active class to clicked tab
             
+                        // The active tab href code (ie item-1)
                         var active_tab = this.href.toString().substring(this.href.toString().indexOf("#") + 1);
 
-            
                         // Clear all graphs from all tabs before rendering the new one
                         clearAllGraphs();
-            
-                       
             
                         // Fade out current visible articles
                         $('.menu__item.item-active').fadeOut(300, function() {
                             // After fadeOut completes, remove 'item-active' from the old article
                             $(this).removeClass('item-active');
             
-                            // Ensure the new article is hidden first, then fade in
                             $(targetArticleID).hide().addClass('item-active').fadeIn(300);  // Fade in new article after class is added
                         });
 
-                         // Check if the tab has a corresponding graph script
+                         // Check if the tab has a corresponding data script
                          if (graphMapping[active_tab]) {
                             loadGraph(graphMapping[active_tab], ContainerMapping[active_tab]); // Load the corresponding graph into the correct container
                         }
@@ -228,30 +231,24 @@
             
                     // Function to clear all graphs from all containers
                 function clearAllGraphs() {
-                        console.log("Clearing all graphs...");
-            
                         $('.network').remove();
-                        // Clear any existing graph content inside all graph containers
-                        //d3.selectAll(".graph-container").selectAll("*").remove();
+                        // Clear any existing graph content inside all graph containers 
 
                      }
             
                     // General function to load the corresponding graph script into the specific container
                     function loadGraph(graphScript, containerID) {
                     
-                        // Create the div element as a string
+                        // Create new network div 
                         var div_string = '<div class="network"></div>';
 
-                        // Insert the div into the container with the provided containerID
+                        // Insert the div into the container with the provided containerID. Th
                         $(div_string).appendTo(document.getElementById(containerID));
 
-                        // Manually call the graph function after the div is inserted
+                        // Insert the graph 
                         graph("data/"+graphScript);
                     }
                 });
-            </script>
-            
-    </body>
-    
-    
+            </script> 
+    </body> 
 </html>

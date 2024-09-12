@@ -1,13 +1,6 @@
 
 // Utilities.
 
-function setProgressValues(selector) {
-    $(selector).css({
-        'left': '20%',
-        'right': '20%'
-    });
-}
-
 function formatNumbers(d) {
     /*
     Function that rounds number to 2 significant digits, with no grouping for thousnads. 
@@ -224,7 +217,7 @@ d3.json(filepath).then(data => {
         .domain(d3.extent(data.links.map(link => link.weight)))
         .range([3, 20])
 
-    // Instantiate variables for later use.
+    // Initiate variables for later use.
     let link, node, label;
 
     // Build force simulation. Mostly boilerplate from docs
@@ -272,17 +265,8 @@ d3.json(filepath).then(data => {
         
     );
 
-        // Sets all the slider values 
-        SetSliders(data);
-
-
-    
-
-    // Draw network function.
-    //function chart(dataset) {
-        /*
-        Draws the network graph 
-        */
+    // Sets all the modular slider filter values -- functions set out in CreateSliders.js
+    SetSliders(data);
 
         // Creates an array, each entry being info on a single node/link
         let nodes = data.nodes.map(d => Object.create(d));
@@ -356,7 +340,7 @@ d3.json(filepath).then(data => {
                     .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
 
-                update => update // If text id updated, handled the same way 
+                update => update // If text is updated, handled the same way 
                     .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
 
@@ -380,14 +364,14 @@ d3.json(filepath).then(data => {
         });
 
         link.style('opacity', function(o) {
-            // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is 0
-            return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.2;
+            // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is .1
+            return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.1;
         });
 
         label
             .text( d => d.id)
             .attr('visibility', function(o) {
-                // If a node is neighbor with source, show text -- if not, don't.
+                // If a node is neighbor with source and it is in the filter parameters, show text -- if not, don't.
                 return neigh(source, o.__proto__.id) && NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
             });
 
@@ -396,7 +380,7 @@ d3.json(filepath).then(data => {
         // Gather tooltip info.
         let nodeInfo = [
             ['Degree', formatNumbers(d.degree, 2)],
-            ['Community', formatNumbers(d.modularity, 2)],
+            ['Modularity', formatNumbers(d.modularity, 2)],
             ['Betweenness', formatNumbers(d.betweenness, 3)],
             ['Eigenvector', formatNumbers(d.eigenvector, 3)],
         ];
@@ -437,7 +421,6 @@ d3.json(filepath).then(data => {
         label
         .text( d => d.id)
         .attr('visibility', function(o) {
-            // If a node is neighbor with source, show text -- if not, don't.
             return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
         });
 
@@ -446,15 +429,15 @@ d3.json(filepath).then(data => {
             .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
             .attr('display', 'block');
 
+        // filtered nodes have their visibility set to none, so this only affects important ones 
         node.style('opacity', 1);
 
-        // Resets the link to their original (possibly filtered) opacity 
+        // Same as above 
         link.style('opacity', 1);
     
     });
     
-    // Slider Listening Events
-
+    // Slider Listening Events -- These are built modularly and is handled in the CreateSliders.js function. Basically, it listens out for all the sliders and updates the filter params when they change
     setupSliderListeners(data, node, link, label);
 
 });

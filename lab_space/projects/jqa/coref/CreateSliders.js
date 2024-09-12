@@ -1,9 +1,21 @@
+
+// Information about sliders and their listening events will be held here 
 sliderConfigs = []
 listenerConfigs = []
 
 
 function SliderHTML(title,step, containerId) {
+    /* 
+        This function inserts the neccasary HTML into the index.html file for a slider to be created. 
+
+        inputs: 
+            title: the full name (all lowercase) of the slider.  
+            step: the step the slider should be tied to 
+            containerID: the container in which the slider should go, for this proj, it is always the 'Filter-Container
+
+    */
     
+    // Shorthand to keep track of slider values 
     const shortTitle = title.substring(0, 3);
     
     const sliderHTML = `
@@ -32,8 +44,20 @@ function SliderHTML(title,step, containerId) {
 }
 
 function initializeSlider(rangeSelector, progressSelector, inputValueSelector, gap) {
+    /* 
+        This function builds out the needed JS for each slider. It has to be fun after the html is inserted. 
 
+        Inputs (these are all set programmatically): 
+            - rangeSelector: The JS variable that represents the filter range 
+            - progressSelector: The JS variable that represents the progress of the filter slider 
+            - inputValueSelector: The JS variable that keeps track of the value that is input for the slider 
+        User Inputs: 
+            - Gap (int): this is how far the two sliders must be from each other (ie how small of a filter is allowed?)
+    
+    
+    */
 
+    // Gets the min and max slider 
     const range = document.querySelectorAll(rangeSelector);
             let min_slider = range[0]; 
             let max_slider = range[1]; 
@@ -42,7 +66,7 @@ function initializeSlider(rangeSelector, progressSelector, inputValueSelector, g
     const progress = document.querySelector(progressSelector);
     const inputValue = document.querySelectorAll(inputValueSelector);
 
-    // Every time a slider is changes 
+    // Every time a slider is changed 
     range.forEach(input => {
         input.addEventListener('input', e => {
             let minRange = parseFloat(min_slider.value);
@@ -74,54 +98,31 @@ function initializeSlider(rangeSelector, progressSelector, inputValueSelector, g
     });
 }
 
-
-
-function SetSliders(data){
-    
-    
-    sliderConfigs.forEach(config => {
-
-
-        // There has to be a better way 
-        eval(" if(d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1] %1 !=0){minimum_"+config.id+" = Math.floor(d3.extent(data.nodes.map(node => node."+ config.getValue +"))[0]); maximum_"+config.id+" = parseFloat((d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1]+.01).toString().substring(0, (d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1]+.01).toString().indexOf('.')+3));} else{maximum_"+config.id+"=d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1];minimum_"+config.id+"  = d3.extent(data.nodes.map(node => node." +config.getValue +"))[0];}");
-
-
-                // Is this a security risk? 
-
-        eval("document.getElementById('"+config.min+"').value = "+"minimum_"+config.id+";");
-        eval("document.getElementById('"+config.max+"').value =" +"maximum_"+config.id +";");
-        eval("document.getElementById('"+config.minRange+"').min =" +"minimum_"+config.id+";");
-
-        eval("document.getElementById('"+config.minRange+"').max ="+"maximum_"+config.id+";");
-
-        eval("document.getElementById('"+config.maxRange+"').min =" +"minimum_"+config.id+";");
-        eval("document.getElementById('"+config.maxRange+"').max  =" +"maximum_"+config.id+";");
-
-        eval("document.getElementById('"+config.minRange+"').value =" +"minimum_"+config.id+";");
-        eval("document.getElementById('"+config.maxRange+"').value =" +"maximum_"+config.id+";");
-
-                // The default for the filtering params are set as the max.min value in the data
-        eval("FilterParams."+config.id +"Min = document.getElementById('"+config.id+"-minrange').value;");
-        eval("FilterParams."+config.id +"Max = document.getElementById('"+config.id+"-maxrange').value;");
-        
-    
-
-    });
-
-}
-
-
-
 function CreateSlider(title,step,containerId,gap){
+    /* 
+        Using the above 2 functions, this creates a slider. 
 
+        inputs (all in the previous functions) 
+            - Title: full title string of slider 
+            - Step : the step of the slider 
+            - containerI: where to place slider in html 
+            - gap: minimum filter range
+
+    */
+
+    // Shorthand to keep track of slider values 
     const shortTitle = title.substring(0, 3);
     
+    // Inserts the needed HTML onto the page. 
     SliderHTML(title,step, containerId);
 
+    // Once the HTML is set, connects it to the relevant Javascript functions 
     initializeSlider("."+shortTitle+"-range-slider input", "."+shortTitle+"-range-slider " + "."+shortTitle+"-progress", "."+shortTitle+"-numberVal input", gap);
 
+    // The below adds entries into the config dics. THese keep track of every slider, and then once all are inserted, these configurations are used to make sure the sliders 
+    // interact with each other correctly 
     const newSliderConfig = {
-        id: shortTitle, // Clustering Coefficient slider
+        id: shortTitle, 
         min: shortTitle+'-minnum',
         max: shortTitle+'-maxnum',
         minRange: shortTitle+'-minrange',
@@ -146,11 +147,59 @@ function CreateSlider(title,step,containerId,gap){
 }
 
 
+function SetSliders(data){
+    /* 
+        This function sets the default values for the slider as the max and min of the attribute, with some exceptions 
+
+        input:
+            data: right now this is not used due to the eval, but i am hoping to get way from using eval
+    
+    */
+    
+    // For every slider configured.. set the permissible ranges and defalt values based on the chart
+    sliderConfigs.forEach(config => {
+
+        // There has to be a better way. This checks if the min and max are ints (bet and eig are floats) and if they are floats, rounds the max up (to the thousands place) and sets the min to the floor  
+        eval(" if(d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1] %1 !=0){minimum_"+config.id+" = Math.floor(d3.extent(data.nodes.map(node => node."+ config.getValue +"))[0]); maximum_"+config.id+" = parseFloat((d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1]+.01).toString().substring(0, (d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1]+.01).toString().indexOf('.')+3));} else{maximum_"+config.id+"=d3.extent(data.nodes.map(node => node."+ config.getValue +"))[1];minimum_"+config.id+"  = d3.extent(data.nodes.map(node => node." +config.getValue +"))[0];}");
+
+                // Is this a pertinant security risk? 
+
+        eval("document.getElementById('"+config.min+"').value = "+"minimum_"+config.id+";");
+        eval("document.getElementById('"+config.max+"').value =" +"maximum_"+config.id +";");
+        eval("document.getElementById('"+config.minRange+"').min =" +"minimum_"+config.id+";");
+
+        eval("document.getElementById('"+config.minRange+"').max ="+"maximum_"+config.id+";");
+
+        eval("document.getElementById('"+config.maxRange+"').min =" +"minimum_"+config.id+";");
+        eval("document.getElementById('"+config.maxRange+"').max  =" +"maximum_"+config.id+";");
+
+        eval("document.getElementById('"+config.minRange+"').value =" +"minimum_"+config.id+";");
+        eval("document.getElementById('"+config.maxRange+"').value =" +"maximum_"+config.id+";");
+
+
+        eval("FilterParams."+config.id +"Min = document.getElementById('"+config.id+"-minrange').value;");
+        eval("FilterParams."+config.id +"Max = document.getElementById('"+config.id+"-maxrange').value;");
+
+    });
+
+}
+
 
 function setupSliderListeners(data, node, link, label) {
+    /*
+        Every slider has 2 inputs (a minimum and maximum value). 
+
+        This builds listners for each input for each slider that then tell the chart to update. 
+            
+        inputs: 
+            data, node, link, label (all pertinent chart objects)
+
+    */
     
+    // For each (BOTH min and max) slider input 
     listenerConfigs.forEach(Listener => {
-        d3.select(`#${Listener.id}`).on("change", function() {
+        //Listen for changes..
+        d3.select("#"+Listener.id).on("change", function() {
             // Update the corresponding FilterParams value
             eval("FilterParams."+Listener.param+" = document.getElementById('"+Listener.id+"').value;");
             // Run the UpdateFilters function with updated values
