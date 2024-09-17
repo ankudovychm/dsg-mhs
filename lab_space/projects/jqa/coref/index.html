@@ -5,12 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="../../../styles/main-dark.css"></link>
         <link rel="stylesheet" href="../../../styles/d3-dark.css"></link>
-        <link rel="stylesheet" href="../../../styles/slider_styles.css"></link>
-        <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../../../styles/slider_styles.css?v2"></link>
+        <link rel="stylesheet" href ="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" type='text/css'>>
         <link rel = "stylesheet" href ="../../../styles/tabs-style.css">
         
-        <script src="CreateSliders.js?v1"></script> <!-- Holds the code for the modular sliders-->
-        <script type="text/javascript" src="coRef.js?v2"></script> <!-- Holds the code for the network viz-->
+        <script src="multiselect-dropdown.js?v1" ></script>
+        <script src="CreateSliders.js?v2"></script> <!-- Holds the code for the modular sliders-->
+        <script type="text/javascript" src="coRef.js?v1"></script> <!-- Holds the code for the network viz-->
         
         <script src="https://d3js.org/d3.v7.min.js"></script>  
 
@@ -41,17 +42,17 @@
                 <ul class = "menu__tabs">
                     
                     <!--Marked active here because it is the default-->
-                    <li><a class="active" href="#item-1"><i class = "fa fa-about"></i> About</a></li>
+                    <li><a class="active" href="#item-1"> About</a></li>
                 
-                    <li><a  href="#item-2"><i class = "fa fa-early"></i> Early years</a></li>
+                    <li><a  href="#item-2"> Early years</a></li>
 
-                    <li><a  href="#item-3"><i class = "fa fa-earlypol"></i> Early Politics</a></li>
+                    <li><a  href="#item-3"> Early Politics</a></li>
 
-                    <li><a  href="#item-4"><i class = "fa fa-secstate"></i> Sec. of State</a></li>
+                    <li><a  href="#item-4"> Sec. of State</a></li>
 
-                    <li><a  href="#item-5"><i class = "fa fa-pres"></i> President</a></li>
+                    <li><a  href="#item-5"> President</a></li>
 
-                    <li><a  href="#item-6"><i class = "fa fa-late"></i> Later Years</a></li>
+                    <li><a  href="#item-6"> Later Years</a></li>
 
                     <!--ie you could make an item-7 here-->
 
@@ -145,14 +146,69 @@
                 <h2 style="color: #7a7369;" class="title">Filters</h2>
                 </div>
 
+                <div style="background-color: #fff; margin: 0px; padding: 10px; display: flex; align-items: center;">
+                    <input type="checkbox" id="filterCheckbox" name="filterCheckbox" style="transform: scale(1.5); margin-right: 10px;">
+                    <label for="filterCheckbox" style="color: #7a7369; font-size: 16px;">Show Neighbor Nodes Outside of Filter Paramters on Hover</label>
+                </div>
+
                 <div  class="Filter-Container" id="Filter-Container">
+
+                    
                     <!--There is a modular filter builder, this uses the CreateSliders.js file to build filters-->
                     <script>
                         CreateSlider('degree', 1, 'Filter-Container',1);
-                        CreateSlider('modularity', 1, 'Filter-Container',1);
+                        
+
+                      
+                    </script>
+
+                    <div class = "child">
+
+
+                    <h3 style="color: #7a7369;" >Community Filter</h3>
+
+                    <div class="slider" style="color: #7a7369;"> 
+                        
+                        
+                        <select name="comms" id="comms" multiple multiple multiselect-search="true" multiselect-select-all="true" >
+                            
+                            <!-- Holds a bunch of different options for community. This could maybe be done better?-->
+                            <option value="0.0">0</option>
+                            <option  value="1.0">1</option>
+                            <option  value="2.0">2</option>
+                            <option  value="3.0">3</option>
+                            <option  value="4.0">4</option>
+                            <option  value="5.0">5</option>
+                            <option  value="6.0">6</option>
+                            <option  value="7.0">7</option>
+                            <option  value="8.0">8</option>
+                            <option  value="9.0">9</option>
+                            <option  value="10.0">10</option>
+                            <option  value="11.0">11</option>
+                            <option  value="12.0">12</option>
+                            <option  value="13.0">13</option>
+                            <option  value="14.0">14</option>
+                            <option  value="15.0">15</option>
+                            <option  value="16.0">16</option>
+                            <option  value="17.0">17</option>
+                            <option  value="18.0">18</option>
+                            <option  value="19.0">19</option>
+                            <option  value="20.0">20</option>
+
+                          </select>
+
+                
+                    </div>
+
+
+                    </div>
+                
+                    <script>
+
                         CreateSlider('betweenness', .01, 'Filter-Container',.05);
                         CreateSlider('eigenvector', .01, 'Filter-Container',.05);
                     </script>
+
                 </div> 
             </div>
                 
@@ -202,11 +258,11 @@
                         clearAllGraphs();
             
                         // Fade out current visible articles
-                        $('.menu__item.item-active').fadeOut(300, function() {
+                        $('.menu__item.item-active').fadeOut(0, function() {
                             // After fadeOut completes, remove 'item-active' from the old article
                             $(this).removeClass('item-active');
             
-                            $(targetArticleID).hide().addClass('item-active').fadeIn(300);  // Fade in new article after class is added
+                            $(targetArticleID).hide().addClass('item-active').fadeIn(0);  // Fade in new article after class is added
                         });
 
                          // Check if the tab has a corresponding data script
@@ -217,6 +273,8 @@
                        // Only shows filters if not on the info tab
                         if (active_tab != "item-1"){
                             $("#FiltersandTitle").css("visibility","visible");
+                           
+
                         }
 
                         else {
@@ -237,7 +295,7 @@
                      }
             
                     // General function to load the corresponding graph script into the specific container
-                    function loadGraph(graphScript, containerID) {
+                    async function loadGraph(graphScript, containerID) {
                     
                         // Create new network div 
                         var div_string = '<div class="network"></div>';
@@ -247,8 +305,17 @@
 
                         // Insert the graph 
                         graph("data/"+graphScript);
+                        await sleep(50);
+
+                        document.getElementById("comms").loadOptions();
+
                     }
                 });
             </script> 
-    </body> 
+    
+
+    
+
+
+</body> 
 </html>

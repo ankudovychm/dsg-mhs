@@ -131,11 +131,13 @@ function CreateSlider(title,step,containerId,gap){
     };
 
     const newMinListenerConfig ={id:shortTitle+"-minrange",
-                            param:shortTitle+"Min"
+                            param:shortTitle+"Min", 
+                            full_name: title
     };
     
     const newMaxListenerConfig ={id:shortTitle+"-maxrange",
-        param:shortTitle+"Max"
+        param:shortTitle+"Max", 
+        full_name: title
     };
 
     sliderConfigs.push(newSliderConfig);
@@ -182,6 +184,69 @@ function SetSliders(data){
 
     });
 
+}
+
+function UpdateFilters(dataset,node,link,label){
+    /* 
+    Function run whenever a slider value is changed. Updates the nodes visible to only be those that 
+    meet all the criteria below. M
+    
+    Might it be worthwhile to add advanced logical filtering (ie AND/OR between different sliders)?
+    */
+
+    console.log(
+            "Degree Min:" + FilterParams.degMin + 
+        '\n' +"Degree Max:" +FilterParams.degMax+
+        '\n' +
+        '\n'+ "Modularity Min:" + FilterParams.modMin + 
+        '\n' +"Modularity Max:" +FilterParams.modMax +
+        '\n' +
+        '\n' +"Betweenness Min:" +FilterParams.betMin +
+        '\n' +"Betweenness Max:" +FilterParams.betMax + 
+        '\n' +
+        '\n' +"Eigenvector Min:" +FilterParams.eigMin + 
+        '\n' +"Eigenvector Max:" +FilterParams.eigMax  
+    );
+
+    selections = (Array.from(document.getElementById('comms').selectedOptions).map(({ value }) => value)).map(Number);
+    console.log(selections);
+
+    // Right now, it does this filtering for every single attribute (min and max) every time any (possible unrelated) is udated. Is there a better way? 
+    let FilteredNodes = dataset.nodes.map(d => Object.create(d))
+    .filter(function (d) { return d.degree >= FilterParams.degMin })
+    .filter(function (d) { return d.degree <= FilterParams.degMax })
+    .filter(function (d) { return selections.includes(parseInt(d.modularity)) })
+    .filter(function (d) { return d.betweenness >= FilterParams.betMin })
+    .filter(function (d) { return d.betweenness <= FilterParams.betMax })
+    .filter(function (d) { return d.eigenvector >= FilterParams.eigMin })
+    .filter(function (d) { return d.eigenvector <= FilterParams.eigMax });
+
+    // Gets only the Ids of the filtered Nodes 
+    NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
+
+
+    // If the node is in the list, it is visible, if it is not, it isn't 
+     node.style('visibility', function(o) {
+            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+    });
+
+    // If both the target and source node are unfiltered, the links will be visible
+    link.style('visibility',function(o){
+            return NewNodes.includes(o.__proto__.source.id) && NewNodes.includes(o.__proto__.target.id) ? "visible" : "hidden";
+    });
+
+    // If a node is visible, its label will be as well
+    label.text( d => d.name).attr('visibility', function(o) {
+            // If a node is neighbor with source, show text -- if not, don't.
+
+            if (NewNodes.includes(o.__proto__.id) && o.__proto__.degree > 3) {
+                return "visible";
+            }
+            
+            else {
+                return "hidden";
+            }
+    });     
 }
 
 

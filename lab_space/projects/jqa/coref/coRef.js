@@ -1,6 +1,18 @@
 
 // Utilities.
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function createArray(start, end) {
+    let result = [];
+    for (let i = start; i <= end; i++) {
+        result.push(i);
+    }
+    return result;
+}
+
 function formatNumbers(d) {
     /*
     Function that rounds number to 2 significant digits, with no grouping for thousnads. 
@@ -9,68 +21,6 @@ function formatNumbers(d) {
         d: number to be rounded
     */
     return d3.format('.2r')(d);
-}
-
-function UpdateFilters(dataset,node,link,label){
-    /* 
-    Function run whenever a slider value is changed. Updates the nodes visible to only be those that 
-    meet all the criteria below. M
-    
-    Might it be worthwhile to add advanced logical filtering (ie AND/OR between different sliders)?
-    */
-
-    console.log(
-            "Degree Min:" + FilterParams.degMin + 
-        '\n' +"Degree Max:" +FilterParams.degMax+
-        '\n' +
-        '\n'+ "Modularity Min:" + FilterParams.modMin + 
-        '\n' +"Modularity Max:" +FilterParams.modMax +
-        '\n' +
-        '\n' +"Betweenness Min:" +FilterParams.betMin +
-        '\n' +"Betweenness Max:" +FilterParams.betMax + 
-        '\n' +
-        '\n' +"Eigenvector Min:" +FilterParams.eigMin + 
-        '\n' +"Eigenvector Max:" +FilterParams.eigMax  
-    );
-
-
-    // Right now, it does this filtering for every single attribute (min and max) every time any (possible unrelated) is udated. Is there a better way? 
-    let FilteredNodes = dataset.nodes.map(d => Object.create(d))
-    .filter(function (d) { return d.degree >= FilterParams.degMin })
-    .filter(function (d) { return d.degree <= FilterParams.degMax })
-    .filter(function (d) { return d.modularity >= FilterParams.modMin })
-    .filter(function (d) { return d.modularity <= FilterParams.modMax })
-    .filter(function (d) { return d.betweenness >= FilterParams.betMin })
-    .filter(function (d) { return d.betweenness <= FilterParams.betMax })
-    .filter(function (d) { return d.eigenvector >= FilterParams.eigMin })
-    .filter(function (d) { return d.eigenvector <= FilterParams.eigMax });
-
-    // Gets only the Ids of the filtered Nodes 
-    NewNodes = FilteredNodes.map(function(FilteredNodes) { return FilteredNodes.id; });
-
-
-    // If the node is in the list, it is visible, if it is not, it isn't 
-     node.style('visibility', function(o) {
-            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
-    });
-
-    // If both the target and source node are unfiltered, the links will be visible
-    link.style('visibility',function(o){
-            return NewNodes.includes(o.__proto__.source.id) && NewNodes.includes(o.__proto__.target.id) ? "visible" : "hidden";
-    });
-
-    // If a node is visible, its label will be as well
-    label.text( d => d.id).attr('visibility', function(o) {
-            // If a node is neighbor with source, show text -- if not, don't.
-
-            if (NewNodes.includes(o.__proto__.id) && o.__proto__.degree > 3) {
-                return "visible";
-            }
-            
-            else {
-                return "hidden";
-            }
-    });     
 }
 
 
@@ -88,54 +38,8 @@ function neigh(a, b) {
     return a == b || adjlist.includes(a + '-' + b) || adjlist.includes(b + '-' + a);
 }
 
-/* 
-Build drag event handlers
 
-These allow the nodes to not be affected by the "gravity" of the sim while being dragged
-*/
-function dragStarted(d, event) {
-    /*
-    At start of drag, the x and y coordinate are fixed (fx, fy) to their starting point
-
-    Inputs: 
-        d: Draggable node 
-        event: The drag event
-
-    */
-    if (!event.active) window.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-}
-  
-function dragged(d, event) {
-     /*
-    While dragging, the fixed location of the node is set to the info of the drag event
-
-    Inputs: 
-        d: Draggable node 
-        event: The drag event
-
-    */
-    d.fx = event.x;
-    d.fy = event.y;
-    console.log(d.fy);
-}
-  
-function dragEnded(d, event) {
-    /*
-    After the drag ends, the fixed value is set to be empty again. 
-
-    Inputs: 
-        d: Draggable node 
-        event: The drag event
-
-    */
-    if (!event.active) window.simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
-
-
+window.Extent = [];
 
 function graph(filepath){
 
@@ -144,6 +48,9 @@ function graph(filepath){
 
 // "data" now holds the JSON data for building the grapgh
 d3.json(filepath).then(data => {
+
+    mod_range = d3.extent(data.nodes.map(node => node.modularity))
+    window.Extent = createArray(mod_range[0],mod_range[1]);
 
     d3.selectAll("svg > *").remove();
 
@@ -266,10 +173,12 @@ d3.json(filepath).then(data => {
     );
 
     // Sets all the modular slider filter values -- functions set out in CreateSliders.js
-    SetSliders(data);
+    SetSliders(data);  
 
         // Creates an array, each entry being info on a single node/link
         let nodes = data.nodes.map(d => Object.create(d));
+
+        
 
         // This value will change when filtered, but it is set to default at all nodes 
         NewNodes = nodes.map(function(nodes) { return nodes.id; });
@@ -320,13 +229,6 @@ d3.json(filepath).then(data => {
                 exit => exit.transition().remove() // Will fade out on exit 
             )
 
-            // Makes the dragging work 
-            .call(d3.drag()
-                .on("start", dragStarted)
-                .on("drag", dragged)
-                .on("end", dragEnded)
-            );
-
 
         // Write labels.
         label = d3.select('.labels')
@@ -337,11 +239,11 @@ d3.json(filepath).then(data => {
                         .attr('class', 'label')
                         .attr('pointer-events', 'none')
                     // Label is shown if degree over 3.0, and it is scaled based off degree    
-                    .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
+                    .text( d => {if (d.degree > 3.0) {return d.name} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
 
                 update => update // If text is updated, handled the same way 
-                    .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
+                    .text( d => {if (d.degree > 3.0) {return d.name} else {return ''}} )
                         .attr('font-size', d => fontSizeScale(d.degree)),
 
                 exit => exit.transition().remove() // transition out 
@@ -355,27 +257,98 @@ d3.json(filepath).then(data => {
     // Move mouse over/out.
     node.on('mouseover', function(event, d, i) { // Each node listens for mouseover 
 
+
         // Gets the ID of the node that is highlighted over 
         let source = d3.select(event.target).datum().__proto__.id;
 
-        node.style('opacity', function(o) {
-            // If node (o) is neighbor of source, opacity is 1, otherwise it is set to .1
-            return neigh(source, o.__proto__.id) ? 1: 0.1;
-        });
+        checkbox = document.getElementById('filterCheckbox');
+        // Check if the checkbox is checked -- if it is, more cimpleicated filtering 
+        if (checkbox.checked) {
 
-        link.style('opacity', function(o) {
-            // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is .1
-            return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.1;
-        });
+            // Sets everything back to visible for now, so that neighbors not in filters can be seen 
+            node.style('visibility' ,'visible');
 
-        label
-            .text( d => d.id)
-            .attr('visibility', function(o) {
-                // If a node is neighbor with source and it is in the filter parameters, show text -- if not, don't.
-                return neigh(source, o.__proto__.id) && NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+            link.style('visibility' ,'visible');
+
+
+            node.style('opacity', function(o) {
+                    var IsInFilters = NewNodes.includes(o.__proto__.id);
+                    var IsNeigh = neigh(source, o.__proto__.id);
+            
+                if (IsInFilters && IsNeigh) {
+                    return 1;
+                } 
+
+                else if (!IsInFilters && IsNeigh) {
+                    return .45;
+                }
+
+                else if (IsInFilters && !IsNeigh) {
+                    return .1;
+                }
+
+                else if (!IsInFilters && !IsNeigh) {
+                    return 0;
+                }
             });
 
+            link.style('opacity', function(o) {
+                var IsInFilters = (NewNodes.includes(o.__proto__.source.id)) && (NewNodes.includes(o.__proto__.target.id));
+                var IsConnected = o.__proto__.source.id == source || o.__proto__.target.id == source;
+
+
+            if (IsInFilters && IsConnected){
+
+                return 1; 
+            }
+
+            else if (!IsInFilters && IsConnected){
+
+                return .45;
+            }
+
+            else if (IsInFilters && !IsConnected){
+
+                return .1;
+            }
+
+            else if (!IsInFilters && !IsConnected){
+
+                return 0;
+            }
+
+            });
+    
+            label
+                .text( d => d.name)
+                .attr('visibility', function(o) {
+                    // If a node is neighbor with source and it is in the filter parameters, show text -- if not, don't.
+                    return neigh(source, o.__proto__.id) ? "visible" : "hidden";
+                });
+        }
         
+        
+        else {
+
+            node.style('opacity', function(o) {
+                // If node (o) is neighbor of source, opacity is 1, otherwise it is set to .1
+                return neigh(source, o.__proto__.id) ? 1: 0.1;
+            });
+    
+            link.style('opacity', function(o) {
+                // If link (o)'s source or target is the selected node, then opacity is 1, otherwise it is .1
+                return o.__proto__.source.id == source || o.__proto__.target.id == source ? 1 : 0.1;
+            });
+    
+            label
+                .text( d => d.name)
+                .attr('visibility', function(o) {
+                    // If a node is neighbor with source and it is in the filter parameters, show text -- if not, don't.
+                    return neigh(source, o.__proto__.id) && NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+                });
+    
+
+        }
 
         // Gather tooltip info.
         let nodeInfo = [
@@ -389,13 +362,14 @@ d3.json(filepath).then(data => {
             .transition(duration) // Sets attributes like transition duration and location. 
                 .attr('pointer-events', 'none')
                 .style('opacity', 0.7) // lowered opacatiy so nodes/links behind can be seen 
+                .style('color', "#fff")
                 
                 // Changed to tie it to mouse movement because this stops it from getting wonky when zoom/page view is changed. 
                 .style("left", (event.x) + "px")
                 .style("top", (event.y) + "px");
             
         toolHeader
-            .html(d.id)
+            .html(d.name)
             .attr('pointer-events', 'none');
 
         toolBody
@@ -417,16 +391,24 @@ d3.json(filepath).then(data => {
     node.on('mouseout', function () { // hides tooltip when not highlighting node
         tooltip.transition(duration).style('opacity', 0);
 
+        checkbox = document.getElementById('filterCheckbox');
+        // Check if the checkbox is checked
+        if (checkbox.checked) {
+
+            UpdateFilters(data, node, link, label);
+        }
+
+    
         // First, hide text that is tied to a filtered away node
         label
-        .text( d => d.id)
-        .attr('visibility', function(o) {
-            return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
+            .text( d => d.name)
+            .attr('visibility', function(o) {
+                return NewNodes.includes(o.__proto__.id) ? "visible" : "hidden";
         });
 
         // Then, only display on the remaining if degree is above 3
         label
-            .text( d => {if (d.degree > 3.0) {return d.id} else {return ''}} )
+            .text( d => {if (d.degree > 3.0) {return d.name} else {return ''}} )
             .attr('display', 'block');
 
         // filtered nodes have their visibility set to none, so this only affects important ones 
@@ -434,12 +416,30 @@ d3.json(filepath).then(data => {
 
         // Same as above 
         link.style('opacity', 1);
+
+        
+
+       
     
     });
+
+        // This responds to click events by appending the associated node's id to the url and opening it.
+       node.on('click', function(event, d) {
+           var url = "https://www.primarysourcecoop.org/publications/coop/explore/person/"
+           url += d.id
+           window.open(url, "_blank")
+       });
     
     // Slider Listening Events -- These are built modularly and is handled in the CreateSliders.js function. Basically, it listens out for all the sliders and updates the filter params when they change
     setupSliderListeners(data, node, link, label);
 
+    d3.select(comms).on("change", function() {
+        // Update the corresponding FilterParams value
+        UpdateFilters(data, node, link, label);
+    });
+
+
+    //console.log(window.Extent);
 });
 
 }
